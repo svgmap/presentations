@@ -1,3 +1,1 @@
-This directory contains supplementary materials for the session  
-[From Hyper-Layering to Practical SVGMap: AppLayers & Community Updates](https://www.w3.org/events/meetings/ebda7af1-1b21-43e1-977d-faa46283dc70/)  
-presented at [W3C Breakouts Day 2026](https://github.com/w3c/breakouts-day-2026).
+This directory contains supplementary materials for the session [From Hyper-Layering to Practical SVGMap: AppLayers & Community Updates](https://www.w3.org/events/meetings/ebda7af1-1b21-43e1-977d-faa46283dc70/) presented at [W3C Breakouts Day 2026](https://github.com/w3c/breakouts-day-2026).
