@@ -4,3 +4,5 @@ This repository hosts slides, videos, and notes published by the SVGMap communit
 GitHubPages : https://svgmap.github.io/presentations/
 
 * [W3C breakouts-day-2026](breakouts-day-2026-W3C/)
+
+* [W3C Maps for HTML Community Group Input Materials](W3C_Maps4HTMLCG/)
