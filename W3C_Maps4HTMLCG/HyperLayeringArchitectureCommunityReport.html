@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Hyper-Layering Architecture (HLA) Community Report</title>
+    <script
+      src="https://www.w3.org/Tools/respec/respec-w3c"
+      class="remove"
+    ></script>
+    <script class="remove">
+      var respecConfig = {
+        specStatus: "CG-DRAFT",
+//        specStatus: "unofficial",
+//        specStatus: "base",
+        shortName: "hla-community-report",
+        group: "maps4html",
+        editors: [
+          {
+            name: "Satoru Takagi",
+            company: "KDDI Corporation",
+            url: "https://www.w3.org/users/39613/",
+          },
+        ],
+        github: "https://github.com/Maps4HTML/hyperLayeringArchitecture", // 適切なリポジトリに変更してください
+        edDraftURI: "https://svgmap.org/movie/TPAC2025/HyperLayeringArchitectureCommunityReport.html",  // Editor's Draftを現在の場所に
+        localBiblio: {
+          "HLA-SVGT": {
+            title: "Tiling and Layering Module for SVGT (W3C Member Submission)",
+            href: "https://www.w3.org/submissions/2011/SUBM-SVGTL-20110607/",
+            publisher: "W3C",
+            date: "2011"
+          },
+          "JIS-X-7197": {
+            title: "JIS X 7197:2012 Geographic information — SVG map",
+            href: "https://webdesk.jsa.or.jp/books/W11M0090/index/?bunsyo_id=JIS+X+7197%3A2012",
+            publisher: "Japanese Industrial Standards Committee"
+          },
+          "HLA-AC2024": {
+            title: "W3C AC 2024 – Hyper-Layering Architecture Materials",
+            href: "https://svgmap.org/movie/AC2024/",
+            publisher: "W3C"
+          },
+          "HLA-TPAC2025": {
+            title: "A Foundation for a Decentralized User-centric Web Mapping: The Hyper-Layering Architecture",
+            href: "https://www.w3.org/events/meetings/422ec06e-a24f-4471-810b-1bddd5911cec/",
+            publisher: "W3C",
+            date: "2025"
+          },
+          "svgmap-js": {
+            title: "svgmap.js: A reference implementation of HLA 2.0 (LaWA)",
+            href: "https://github.com/svgmap/svgmapjs",
+            publisher: "SVGMap project",
+            date: "2025"
+          },
+          "MAPML-ALT": {
+            title: "MapML Proposal – Alternative Approaches. Maps4HTML",
+            href: "https://github.com/Maps4HTML/MapML-Proposal#alternative-approaches",
+            publisher: "Maps4HTML",
+            date: "2025"
+          },
+          "SVG11-GEOR": {
+            title: "Scalable Vector Graphics (SVG) 1.1 (Second Edition) - Geographic Coordinate Systems",
+            href: "https://www.w3.org/TR/SVG11/coords.html#GeographicCoordinates",
+            publisher: "W3C",
+            date: "2011"
+          },
+          "SVGT12-GEOR": {
+            title: "Scalable Vector Graphics (SVG) Tiny 1.2 Specification - Geographic Coordinate Systems",
+            href: "https://www.w3.org/TR/SVGTiny12/coords.html#GeographicCoordinates",
+            publisher: "W3C",
+            date: "2008"
+          },
+          "SVG2-VE": {
+            title: "Scalable Vector Graphics (SVG) 2 - Vector Effects",
+            href: "https://www.w3.org/TR/SVG2/coords.html#VectorEffects",
+            publisher: "W3C",
+            date: "2023"
+          },
+          "HLA-DEMO": {
+            title: "Demo and home pahe of svgmap.js (HLA implementation)",
+            href: "https://www.svgmap.org/",
+            publisher: "svgmap.org",
+            date: "2025"
+          },
+        }
+      };
+    </script>
+<style>
+  /* 全ての画像が親要素の幅を超えないようにし、高さを自動調整する */
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block; /* 下の隙間を消す */
+    margin: 1em 0;  /* 前後に少し余白を作る */
+  }
+</style>
+  </head>
+  <body>
+
+<p class="copyright">
+Copyright © 2025 the Contributors to the Hyper-Layering Architecture (HLA) Community Report, published by the  <a href="https://www.w3.org/community/maps4html/">Maps For HTML Community Group</a>  under the <a href="https://www.w3.org/community/about/process/cla/">W3C Community Contributor License Agreement (CLA)</a>. A human-readable <a href="https://www.w3.org/community/about/process/cla-deed/">summary</a> is available.
+</p>  
+
+<section id="abstract">
+  <p>
+    This document is a Community Group Report draft intended to introduce the <strong>Hyper-Layering Architecture (HLA)</strong> as a topic of discussion within the Maps for HTML Community Group.
+  </p>
+  <p>
+    It is not a specification proposal, nor does it seek immediate standardization. Its primary purpose is to provide shared context, including the philosophical motivation, historical background, and references to existing implementations and materials related to HLA.
+  </p>
+  <p>
+    This report is published in the Maps for HTML Community Group following recent W3C discussions, where it was agreed that existing CG infrastructure provides an appropriate venue for architectural exploration related to maps on the Web.
+  </p>
+</section>
+
+
+<section id="sotd" class="override">
+    <h2>Status of this document</h2>
+<p>This report was published by the <a href="https://www.w3.org/groups/cg/maps4html"> Maps For HTML Community Group </a>. It is not a W3C Standard nor is it on the W3C Standards Track. Please note that under the <a href="https://www.w3.org/community/about/process/cla/">W3C Community Contributor License Agreement (CLA)</a> there is a limited opt-out and other conditions apply. Learn more about <a href="https://www.w3.org/community/">W3C Community and Business Groups</a>.</p>
+  <p>
+    This document is a Community Group Report draft intended to introduce the <strong>Hyper-Layering Architecture (HLA)</strong> as a topic of discussion within the Maps for HTML Community Group.
+  </p>
+  <p>
+    It is not a specification proposal, nor does it seek immediate standardization. Its purpose is to provide shared context: philosophical motivation, historical background, and references to existing implementations and materials.
+  </p>
+  <p>
+    This report is published in the Maps for HTML Community Group following recent W3C discussions, where it was agreed that existing CG infrastructure provides an appropriate venue for architectural exploration related to maps on the Web.
+  </p>
+</section>
+
+<section id="motivation">
+  <h2>Motivation: Why HLA Matters to Maps for HTML</h2>
+  <p>
+    Web mapping has made remarkable progress over the last two decades. 
+    However, much of this progress has occurred through <strong>centralized services, proprietary frameworks, and siloed web applications</strong>.
+  </p>
+  <p>
+    While these approaches enable rich functionality, they also weaken two foundational principles of the World Wide Web:
+  </p>
+  <ul>
+    <li><strong>Avoiding centralization</strong></li>
+    <li><strong>User- and browser-centric interoperability</strong></li>
+  </ul>
+  <p>
+    The <strong>Hyper-Layering Architecture (HLA)</strong> originates from a long-running attempt to reconcile maps with the original Web architecture: hyperlinks, distributed authorship, and integration performed by the user agent.
+  </p>
+  <p>
+    HLA asks a simple but far-reaching question relevant to the Maps for HTML CG:
+  </p>
+
+  <div class="note"  title="Core Philosophical Question" >
+      <strong>Can maps on the Web be composed, combined, and reused with the same freedom as other Web resources—without relying on centralized aggregation services?</strong>
+  </div>
+</section>
+
+<section id="core-idea">
+  <h2>Core Idea of Hyper-Layering Architecture</h2>
+  <p>
+  At the conceptual core of HLA is the idea of "mapping the Web itself." 
+Rather than treating maps as isolated content within web pages, 
+HLA envisions the entire Web as a single, interconnected spatial canvas — 
+a "One Web Map" where all information and services can be connected through a common spatial context.
+  </p>
+<figure>
+  <img src="MapTheWeb_slide.png" alt="Visual representation of the 'Map the Web itself' concept in HLA">
+  <figcaption>Illustration of the HLA concept: moving from maps inside the Web to envisioning the entire Web as a single interconnected spatial canvas — the 'One Web Map'.</figcaption>
+</figure>
+  <p>
+    At its core, HLA treats <strong>layers as first-class Web resources</strong> identified by URLs and combined dynamically by the browser. 
+    This shift in perspective moves away from monolithic map applications toward a more granular and distributed model.
+  </p>
+  
+  <p>The key principles of this architecture are as follows:</p>
+  <ul>
+    <li>
+      <strong>No mandatory aggregation server</strong>: Integration does not require a central backend; instead, the integration happens directly on the client side.
+    </li>
+    <li>
+      <strong>Loose coupling by hyperlinks</strong>: Layers are referenced via URLs rather than being physically copied or merged into a single database, allowing for flexible updates.
+    </li>
+    <li>
+      <strong>User agent as integrator</strong>: The browser (user agent) takes on the role of the primary engine that performs composition and rendering of the multiple layers.
+    </li>
+    <li>
+      <strong>Distributed ownership</strong>: Each layer remains under the control and authority of its original publisher, preserving data sovereignty.
+    </li>
+  </ul>
+  
+  <p>
+    This approach directly inherits the original World Wide Web model—<strong>hyperlinks + user-agent integration</strong>—and applies it systematically to geospatial content.
+  </p>
+  
+<figure>
+  <img src="HLA_slide.png" alt="Diagram illustrating the key principles of HLA">
+  <figcaption>Illustration summarizing the key principles of HLA: client-side integration, loose coupling via URLs, and distributed ownership.</figcaption>
+</figure>
+  
+  <p>
+  <strong>Note:</strong>
+The discussion in this section is based on the first half of <strong><a href="https://svgmap.org/movie/TPAC2025/HLA_TPAC2025_Slide1.mp4" target="_blank">Slide 1</a></strong> from the materials prepared for the HLA breakout session at TPAC 2025. [[HLA-TPAC2025]]
+  <p>
+  
+</section>
+
+<section id="history">
+  <h2>Historical Background</h2>
+  
+  <section id="origin-1996">
+    <h3>Origin (1996)</h3>
+    <p>
+      The original concept of hyper-layering was conceived in 1996, following discussions on disaster information sharing after the <strong>Great Hanshin–Awaji Earthquake</strong>. 
+      The inability to freely overlay heterogeneous disaster-related maps from different organizations revealed a structural interoperability problem that could not be solved by existing centralized GIS models.
+    </p>
+  </section>
+
+  <section id="early-standardization">
+    <h3>Early Standardization Attempts (2000–2011)</h3>
+    <p>
+    The realization of Hyper-Layering Architecture requires that map content be associated with geographic coordinate systems, so that independently authored layers can be aligned and composed by the user agent.
+    </p>
+    <p>
+      From the early 2000s, HLA development therefore focused on SVG-based mapping, anticipating SVG as a browser-native, interoperable map format capable of carrying such geospatial semantics.
+    </p>
+    <p>Key milestones during this period include:</p>
+    <ul>
+      <li>Participation in the <strong>W3C SVG Working Group</strong> (early 2000s; rejoined formally in 2007).</li>
+      <li>Establishment of the Japanese Industrial Standard: <strong>JIS X 7197 (SVGMap)</strong> [[JIS-X-7197]] .</li>
+      <li><strong>W3C Member Submission (2011)</strong>: <em>SVG-based Tiled Layers and Mapping</em> [[HLA-SVGT]].</li>
+    </ul>
+    <p>
+      Traces of this work remain visible in SVG specifications today, including <strong>geographic coordinate handling in SVG 1.1 [[SVG11-GEOR]] and SVG Tiny 1.2 [[SVGT12-GEOR]]</strong>.
+    </p>
+  </section>
+
+  <section id="svg2-lessons">
+    <h3>SVG 2 and Lessons Learned</h3>
+    <p>
+      During SVG 2 development, HLA-related requirements influenced features such as <strong>Vector Effects</strong> [[SVG2-VE]] , particularly for cartographic annotations and non-scaling symbols.
+    </p>
+    <p>
+      Despite this, browser-level standardization of a complete map architecture proved impractical at that time. This period clarified an important lesson for the community:
+    </p>
+    <div class="note" title="Lesson Learned">
+        <strong>Over-specifying map formats inside a single standard does not scale with the diversity of the Web.</strong>
+    </div>
+  </section>
+</section>
+
+<section id="hla-2-0">
+  <h2>HLA 2.0: Layers as Web Apps (LaWA)</h2>
+  
+  <section id="architectural-shift">
+    <h3>Architectural Shift</h3>
+    <p>
+      After the 2011 Great East Japan Earthquake, the limitations of centralized cloud-based map mashups became evident, particularly in their flexibility to handle diverse and rapidly changing data sources in crisis situations. 
+      As a result, HLA evolved into <strong>HLA 2.0</strong>, also known as <strong>Layers as Web Apps (LaWA)</strong>.
+    </p>
+    <p>In the LaWA model:</p>
+    <ul>
+      <li><strong>Each layer is implemented as a small Web application</strong> using standard HTML, CSS, and JavaScript.</li>
+      <li><strong>Encapsulation</strong>: Layer-specific logic, including user interfaces, parameters, and authentication, is encapsulated within each individual layer.</li>
+      <li><strong>Shared Framework</strong>: A shared client-side framework (<code>svgmap.js </code> [[svgmap-js]]) provides a common geospatial canvas to integrate these independent applications.</li>
+    </ul>
+    <p>
+    Because early attempts to realize HLA through Web standardization were not successful, the Web platform itself still does not provide a shared geospatial canvas that independent layers can rely on.
+As a result, HLA 2.0 necessarily requires a framework to emulate this missing capability. The svgmap.js framework, developed as open source, was created to fulfill this role. At this stage, LaWA therefore has to be implemented as specialized Web applications designed to run within this framework.
+    </p>
+<figure>
+  <img src="LaWA_slide.png" alt="Illustration of HLA 2.0 (LaWA) Layers as Web Apps">
+  <figcaption>Illustration summarizing the HLA 2.0 (LaWA) approach: each layer as an independent Web application integrated on the client side using a shared geospatial canvas.</figcaption>
+</figure>
+  </section>
+
+  <section id="practical-results">
+    <h3>Practical Results</h3>
+    <p>
+      The LaWA approach, powered by <strong>svgmap.js </strong> [[svgmap-js]] , has been rigorously tested and validated through extensive real-world application:
+    </p>
+    <ul>
+      <li>Integration of over <strong>1,000 heterogeneous layers</strong> from various origins. [[HLA-DEMO]]</li>
+      <li>More than <strong>15 years of internal operational use</strong> at KDDI Corporation.</li>
+      <li><strong>Commercial deployment in disaster information systems started in October 2025.</strong></li>
+    </ul>
+    <p>
+      While LaWA demonstrated that large-scale, heterogeneous map integration is entirely feasible <strong>without central aggregation</strong>. Thanks to the hub-and-spoke, weakly coupled architecture of LaWA, the effort required to add new layers grows only linearly, enabling a scale of heterogeneous, cross-origin integration that was not achievable with conventional Web mapping architectures. In this sense, HLA 2.0 represents a substantial and unprecedented success in decentralized map composition.
+      </p>
+
+      <p>
+At the same time, this linear human cost still constitutes a fundamental scalability limit. HLA 2.0 therefore demonstrates both the practical viability of large-scale decentralized map integration and the structural boundary imposed by its framework-based realization.
+    </p>
+    
+    <p>
+    <strong>Note:</strong>
+The concepts described in this section, including the evolution toward HLA 2.0, are presented in the second half of <strong><a href="https://svgmap.org/movie/TPAC2025/HLA_TPAC2025_Slide1.mp4" target="_blank">Slide 1</a></strong> and in <strong><a href="https://svgmap.org/movie/TPAC2025/HLA_TPAC2025_Slide2EN_Short.mp4" target="_blank">Slide 2</a></strong> of the materials prepared for the HLA breakout session at TPAC 2025. [[HLA-TPAC2025]]<br>
+These slides elaborate on the architectural refinement and extended design considerations discussed with participants.
+    </p>
+  </section>
+</section>
+
+<section id="relevance">
+  <h2>Relevance to Maps for HTML CG</h2>
+  <p>
+    From the perspective of the Maps for HTML Community Group charter, HLA fits naturally within the <strong>non-normative, exploratory scope</strong> of the CG. 
+    HLA does not propose a new specification, syntax, or API. Instead, it contributes:
+  </p>
+  <ul>
+    <li>Architectural insights into how maps can align with core Web principles.</li>
+    <li>Historical experience with browser-centric, client-side map composition.</li>
+    <li>Concrete evidence that decentralized, cross-origin layer integration is feasible on the Web.</li>
+  </ul>
+  <p>
+    These contributions directly support the CG’s stated goals of understanding how maps relate to HTML, browsers, and the Web platform, without constraining the group to any particular declarative or imperative solution.
+  </p>
+  <p>
+    In this sense, HLA should be read as a <strong>context-setting architectural report</strong>, analogous to a white paper or use-case document, rather than as a proposal competing for adoption. 
+    Its role is to inform discussion about what kinds of problems matter and which architectural trade-offs exist, leaving questions of concrete formats or specifications explicitly open.
+  </p>
+  <p>
+    By remaining within this charter-aligned role, HLA aims to enrich Maps for HTML CG discussions while respecting the group’s consensus-driven and exploratory mandate.
+  </p>
+</section>
+
+
+<section id="purpose">
+  <h2>Purpose of This Report</h2>
+  <p>
+    This report is intended to:
+  </p>
+  <ul>
+    <li>Provide historical and philosophical context for HLA.</li>
+    <li>Clarify why decentralization and client-side composition matter.</li>
+    <li>Position HLA as a legitimate topic within Maps for HTML CG discussions.</li>
+  </ul>
+  <p>
+    It deliberately avoids proposing new specifications. <strong>Any future technical explorations will be discussed separately, in appropriate contexts.</strong>
+  </p>
+  <p>
+    It should also be explicitly noted that <strong>Hyper-Layering Architecture is not an abstract concept alone</strong>. HLA already has:
+  </p>
+  <ul>
+    <li>An articulated architectural specification developed over time. <strong>[[HLA-SVGT]]</strong> </li>
+    <li>Working, long-lived implementations, most notably the <strong>svgmap.js [[svgmap-js]]</strong> client framework.</li>
+    <li>Operational deployment experience that continues to inform its evolution.</li>
+  </ul>
+  <p>
+    At the same time, this report does <strong>not</strong> advocate bringing the HLA specification itself into the Community Group as a candidate for immediate standardization. 
+    Questions of standardization—whether related to HLA, MapML, or other approaches—are better addressed through broader, open discussion involving browser vendors and diverse stakeholders, informed by practical experience rather than premature convergence.
+  </p>
+</section>
+
+<section id="security-and-isolation">
+  <h2>Addressing Security and Architectural Concerns: S-LaWA</h2>
+
+  <p>
+    As HLA and the LaWA (Layers as Web Apps) model evolved, the community raised valid architectural and security questions. In particular, the discussions documented in the MapML Proposal's “Alternative Approaches” section [[MAPML-ALT]] provided valuable analysis of the differences between declarative mapping models and executable layer architectures.
+  </p>
+
+  <p>
+    These discussions focused on topics such as <strong>DOM isolation</strong>, <strong>implicit versus explicit execution</strong>, <strong>author control</strong>, and overall consistency with the established <strong>Web security model</strong>.
+  </p>
+
+  <p>
+    To explore these concerns in practice, development of a stricter execution architecture for LaWA began in August 2025. After several experimental iterations and implementation refinements, the resulting architecture — <strong>S-LaWA (Sandboxed / Strict LaWA)</strong> — reached production readiness and was integrated into the main SVGMap branch in May 2026.
+  </p>
+
+  <p>
+    Rather than replacing the original LaWA concept, S-LaWA represents an implementation-based attempt to reconcile dynamic decentralized layer behavior with existing and well-established Web security principles, including the Same-Origin Policy, iframe isolation, and asynchronous message passing via <code>postMessage</code>.
+  </p>
+
+  <section id="s-lawa-key-mechanisms">
+    <h3>Key Mechanisms of S-LaWA</h3>
+
+    <p>
+      Interestingly, the architectural direction of S-LaWA gradually converged with ideas discussed more broadly within the Web mapping and standards community — including isolated execution, scoped APIs, explicit author control, and message-oriented integration models.
+    </p>
+
+    <ul>
+      <li>
+        <strong>Isolated Execution &amp; Scoped APIs:</strong>
+        Cross-origin LaWAs are automatically executed inside isolated <code>iframe</code> environments. They cannot directly access either the parent page DOM or the global mapping runtime. Instead, they receive a restricted mock interface (<code>SandboxSvgMap</code>) exposing only minimal capabilities such as viewport queries, coordinate transformations, and refresh requests through asynchronous messaging.
+      </li>
+
+      <li>
+        <strong>DOM Isolation &amp; Differential Rendering:</strong>
+        Rendering inside S-LaWA operates on a local XML DOM rather than the parent document. A <code>MutationObserver</code> monitors local changes and transmits only minimal differential payloads back to the parent framework, which safely applies them to the rendered layer tree.
+      </li>
+
+      <li>
+        <strong>Explicit Author Control:</strong>
+        Layer authors can explicitly define execution policies using the <code>data-lawa-mode</code> attribute (e.g. <code>auto</code>, <code>isolated</code>, <code>tight</code>). In cross-origin situations, isolated execution is enforced automatically, and inline <code>&lt;script&gt;</code> execution inside layer SVG documents is fully disabled.
+      </li>
+
+      <li>
+        <strong>CORS Independence (S-LaWA Level 2):</strong>
+        In environments where external servers do not provide CORS headers, the parent framework can delegate fetching and parsing entirely into the sandboxed S-LaWA environment. This enables secure integration of externally hosted geospatial resources without requiring modifications on the provider side.
+      </li>
+    </ul>
+  </section>
+
+  <section id="s-lawa-conclusion">
+    <h3>Reducing the Architectural Gap</h3>
+
+    <p>
+      S-LaWA does not eliminate the philosophical distinction between declarative geospatial content and executable layer logic. However, it demonstrates that dynamic rendering and protocol adaptation can be encapsulated within existing browser security boundaries in a way that substantially reduces the architectural gap between these approaches.
+    </p>
+
+    <p>
+      In this sense, S-LaWA should be viewed less as a finalized standardization proposal and more as a practical architectural experiment: one that explores how decentralized, protocol-flexible geospatial layers may coexist with the security expectations of the modern Web platform.
+    </p>
+
+    <div class="note" title="Architectural Implications">
+      <strong>Implementation as Exploration:</strong>
+      S-LaWA suggests that browsers do not necessarily need to directly trust third-party mapping logic itself, provided that execution remains constrained within established Web sandbox boundaries. This may help inform future discussions around safer integration models for dynamic geospatial behavior on the Web.
+    </div>
+  </section>
+</section>
+
+
+<section id="Important References">
+  <h2>References and Further Reading</h2>
+  <p>
+    The following resources provide additional technical details, historical documentation, and context for the Hyper-Layering Architecture:
+  </p>
+  <dl class="bibliography">
+
+    <dt id="bib-hla-svgt">[[HLA-SVGT]]</dt>
+    <dd>
+      Satoru Takagi. 
+      <a href="https://www.w3.org/Submission/2011/04/">Tiling and Layering Module for SVGT</a>. 
+      W3C Member Submission, 2011.
+    </dd>
+
+    <dt id="bib-jis-x-7197">[[JIS-X-7197]]</dt>
+    <dd>
+      Japanese Industrial Standards Committee. 
+      <a href="https://webdesk.jsa.or.jp/books/W11M0090/index/?bunsyo_id=JIS+X+7197%3A2012">JIS X 7197:2012 Geographic information — SVG map</a>.
+    </dd>
+
+    <dt id="bib-hla-ac2024">[[HLA-AC2024]]</dt>
+    <dd>
+      <a href="https://www.w3.org/2024/04/AC/ac-agenda.html#monday">AC2024 Japan and the web: disaster recovery - moderated by Jun Murai</a><br>
+      <a href="https://svgmap.org/movie/AC2024/">W3C AC 2024 – Hyper-Layering Architecture Materials</a>.
+    </dd>
+    
+    <dt id="bib-hla-tpac2025">[[HLA-TPAC2025]]</dt>
+    <dd>
+      Satoru Takagi. 
+      <a href="https://www.w3.org/events/meetings/422ec06e-a24f-4471-810b-1bddd5911cec/">A Foundation for a Decentralized User-centric Web Mapping: The Hyper-Layering Architecture</a>. 
+      Presented at W3C TPAC 2025.<br>
+      <a href="https://svgmap.org/movie/TPAC2025/index_HLA_breakout.html">Shared Materials</a>
+      
+    </dd>
+    
+    <dt id="bib-svgmap-js">[[svgmap-js]]</dt>
+    <dd>
+      <a href="https://github.com/svgmap/svgmapjs">svgmap.js: A reference implementation of HLA 2.0 (LaWA)</a>. 
+      GitHub Repository.
+    </dd>
+    
+  </dl>
+</section>
+
+
+  </body>
+</html>
