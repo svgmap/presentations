@@ -1,3 +1,4 @@
 This directory contains supplementary materials for the session [From Hyper-Layering to Practical SVGMap: AppLayers & Community Updates](https://www.w3.org/events/meetings/ebda7af1-1b21-43e1-977d-faa46283dc70/) presented at [W3C Breakouts Day 2026](https://github.com/w3c/breakouts-day-2026).
 
 * [presentation1](./presen1.mp4) : svgmapAppLayers repository : LaWA Lib. for svgmapjs
+* [presentation2](./W3C%20HLA_SVGMaps%20Presentation%20-%20Canada%20Team.pptx) : Activities in the Canadian Community
