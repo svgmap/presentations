@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>A Minimal Map Model for Web User Agents</title>
+    <script
+      src="https://www.w3.org/Tools/respec/respec-w3c"
+      class="remove"
+    ></script>
+    <script class="remove">
+      var respecConfig = {
+        specStatus: "CG-DRAFT",
+//        specStatus: "unofficial",
+//        specStatus: "base",
+        shortName: "minimal-map-model",
+        group: "maps4html",
+        editors: [
+          {
+            name: "Satoru Takagi",
+            company: "KDDI Corporation",
+            url: "https://www.w3.org/users/39613/",
+          },
+        ],
+        github: "https://github.com/Maps4HTML/minimalMapModel", 
+        edDraftURI: "https://svgmap.org/movie/TPAC2025/minimalMapModel.html",  // Editor's Draftを現在の場所に
+        // Note: Generic placeholder link for the CG group
+        localBiblio: {
+          "GEOJSON": {
+            title: "The GeoJSON Format",
+            href: "https://datatracker.ietf.org/doc/html/rfc7946",
+            authors: ["H. Butler", "M. Daly", "A. Doyle", "S. Gillies", "S. Hagen", "T. Schaub"],
+            status: "RFC 7946",
+            publisher: "IETF",
+            date: "August 2016"
+          },
+          "WGS84": {
+            title: "World Geodetic System 1984 (EPSG:4326)",
+            href: "https://epsg.org/datum_6326/World-Geodetic-System-1984-ensemble.html",
+            publisher: "National Geospatial-Intelligence Agency (NGA)"
+          },
+          "GEOLOCATION-API": {
+            title: "Geolocation API",
+            href: "https://www.w3.org/TR/geolocation/",
+            publisher: "W3C"
+          },
+          "MapML": {
+            title: "Map Markup Language (MapML) Specification",
+            href: "https://maps4html.org/MapML/spec/",
+            publisher: "Maps for HTML Community Group"
+          },
+          "HLA": {
+            "title": "A Foundation for a Decentralized User-centric Web Mapping: The Hyper-Layering Architecture",
+            "href": "https://www.w3.org/events/meetings/422ec06e-a24f-4471-810b-1bddd5911cec/",
+            "publisher": "W3C",
+            "date": "2024"
+          },
+          "HLA-SVGT": {
+            "title": "Tiling and Layering Module for SVGT (W3C Member Submission)",
+            "href": "https://www.w3.org/Submission/2011/04/",
+            "publisher": "W3C",
+            "date": "2011"
+          },
+        }
+      };
+    </script>
+    <style>
+      /* Custom styles for the table in Section 3.4.6 */
+      table.data-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      table.data-table th, table.data-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+      table.data-table th {
+        background-color: #f2f2f2;
+        text-align: left;
+      }
+    </style>
+  </head>
+  <body>
+<p class="copyright">
+Copyright © 2025 the Contributors to the A Minimal Map Model for Web User Agents Community Report, published by the  <a href="https://www.w3.org/community/maps4html/">Maps For HTML Community Group</a>  under the <a href="https://www.w3.org/community/about/process/cla/">W3C Community Contributor License Agreement (CLA)</a>. A human-readable <a href="https://www.w3.org/community/about/process/cla-deed/">summary</a> is available.
+</p>  
+
+
+    <section id="abstract">
+      <p>
+        This document (Minimal Model) aims to improve the current fragmentation of map technologies on the Web by defining "what is minimally necessary" for maps in Web user agents.
+        It presents common parts and concepts as a foundation to allow all existing map representations—including services, frameworks, content, and hand-drawn expressions—to be mutually connected.
+        This document defines a mechanism to express the correspondence between "Internal Coordinates" and "Real-world Coordinates" (WGS84 [[WGS84]] ) in a form that can be shared on the Web.
+      </p>
+    </section>
+
+    <section id="sotd" class="override">
+    <h2>Status of this document</h2>
+    <p>This report was published by the <a href="https://www.w3.org/groups/cg/maps4html"> Maps For HTML Community Group </a>. It is not a W3C Standard nor is it on the W3C Standards Track. Please note that under the <a href="https://www.w3.org/community/about/process/cla/">W3C Community Contributor License Agreement (CLA)</a> there is a limited opt-out and other conditions apply. Learn more about <a href="https://www.w3.org/community/">W3C Community and Business Groups</a>.</p>
+    
+      <p>
+        This is a draft document produced by the Maps for HTML Community Group.
+        It is not intended to replace existing technologies or to mandate a new, specific architecture or model.
+      </p>
+    </section>
+
+<section id="introduction">
+  <h2>Introduction</h2>
+  <p>
+    Technologies for handling maps on the Web have diversified remarkably over the past decade.
+    A wide variety of map representations, services, frameworks, and content exist on the Web, ranging from MapML [[MapML]] (a proposal in the Maps for HTML CG), Leaflet, MapLibre GL JS, Google Maps API, and CesiumJS, to various implementations based on SVG [[SVG]] , the Hyper-Layering Architecture (HLA) [[HLA]] [[HLA-SVGT]] and its implementation svgmap.js, and even free-form Web expressions including hand-drawn maps.
+  </p>
+  <p>
+    However, this diversity has simultaneously created the challenge of being "disconnected and incompatible."
+    These technologies have evolved as independent worlds, without the prerequisite of a common geographic coordinate model, representation method, or interoperability mechanism.
+  </p>
+  <p>
+    The current ecosystem faces several specific issues:
+  </p>
+  <ul>
+    <li>Some implementations do not allow for the specification of geographic coordinates.</li>
+    <li>Markers or content prepared for one implementation cannot be used in another.</li>
+    <li>Different implementations adopt their own unique zoom systems or map coordinates.</li>
+    <li>Results from the Geolocation API cannot always be handled directly.</li>
+    <li>Concepts do not align between "map services," "map frameworks," and "map content."</li>
+    <li>There is no means to combine existing expressions while preserving them as they are.</li>
+  </ul>
+  <p>
+    Despite their wide use on the Web, the ecosystem of map technology on Web browsers lacks a common underlying semantics.
+    Consequently, map content and code depend on the specific framework or service being used, resulting in limited reusability, portability, and interoperability.
+  </p>
+  <p>
+    This document (Minimal Model) aims to improve this situation by defining "what is minimally necessary" for maps in Web user agents.
+    It is not intended to replace existing technologies or to mandate a new, specific architecture or model.
+    Rather, its purpose is to present only the "common parts and concepts as a foundation" necessary to allow all existing map representations—including services, frameworks, content, and hand-drawn expressions—to be mutually connected in their current forms.
+  </p>
+  <p>
+    The target of this document is the "map ecosystem as a whole," and it does not assume any specific product or specification system.
+    What is needed is not a new framework or complex standards, but rather to fill the "minimal semantic hole for maps" currently missing from Web standards.
+  </p>
+  <p>
+    From this perspective, this document approaches the following questions:
+  </p>
+  <ul>
+    <li>What is a map in a Web User Agent (i.e., a Web browser)?</li>
+    <li>Where does the "minimal unit of a map" exist?</li>
+    <li>What is "truly minimal" for map representations on Web browsers to achieve compatibility and connect with each other?</li>
+  </ul>
+  <p>
+    Based on these questions, this document functionally organizes the concept of a "map" and presents a minimal foundational model.
+  </p>
+  <p>
+This document intentionally focuses on the Web user agent’s perspective. It does not attempt to redefine cartography, GIS theory, or geodetic practice. Those concerns remain fully valid and are expected to operate above this minimal semantic layer.
+  </p>
+</section>
+
+<section id="reorganizing-concepts">
+  <h2>What is a "Map" in a Web Browser? (Reorganizing Concepts on the Web)</h2>
+  
+  <section id="background">
+    <h3>Background</h3>
+    <p>
+      On the current Web, extremely diverse "map-like" resources exist, ranging from traditional GIS maps to hand-drawn illustrations.
+      These resources vary greatly in structure, coordinate systems, representation methods, and interaction models; as a result, no unified "map" concept exists for the Web as a whole.
+    </p>
+    <p>
+      Representative examples include:
+    </p>
+    <ul>
+      <li>Static images with geographical context (e.g., scanned maps, tourist information maps).</li>
+      <li>Alignable raster images (e.g., aerial photographs, old maps).</li>
+      <li>SVGs or drawings with unique coordinate spaces.</li>
+      <li>Various Web map frameworks (Leaflet, MapLibre GL JS, Google Maps API, CesiumJS—where even 3D maps are projected to 2D at the rendering stage on the screen).</li>
+      <li>MapML (a proposal within the Maps for HTML CG). [[MapML]]</li>
+      <li>HLA (Hyper-Layering Architecture) and its implementation (svgmap.js). [[HLA]] [[HLA-SVGT]]</li>
+      <li>Any map-like representation on the Web, including "hand-drawn maps".</li>
+    </ul>
+    <p>
+      It is clear that all of these share a commonality: they are "graphics" that provide the author and user with "some kind of understanding regarding positions in the real world".
+    </p>
+  </section>
+
+  <section id="current-problems">
+    <h3>Current Problems</h3>
+    <p>
+      However, there is no "minimal common model" on the Web for handling these different types of map-like resources in an interoperable manner.
+      As a result:
+    </p>
+    <ul>
+      <li>There is no standard way to link arbitrary HTML elements to geographic coordinates.</li>
+      <li>Each map framework implements its own coordinate transformation and projection model, leading to a lack of compatibility.</li>
+      <li>Hand-drawn or non-GIS maps are often not treated as "maps" at all.</li>
+      <li>External Web content cannot be consistently placed within the coordinate space internal to a map framework.</li>
+      <li>It may be impossible to coordinate with existing Web APIs, such as the Geolocation API.</li>
+    </ul>
+    <p>
+      This "fragmentation of the map across the Web" is caused by the very diversity of map technology itself and is not a defect of any specific technology.
+      However, as the Web becomes a critical infrastructure for distributing geographic information, this fragmentation has become a major challenge.
+    </p>
+  </section>
+
+  <section id="minimal-web-map-concept">
+<h3>Considering a Minimal "Web Map" Concept</h3>
+  <p>
+    This proposal does not attempt to strictly define "what a map is".
+    Rather, it clarifies the <strong>minimal commonality</strong> required to establish compatibility.
+  </p>
+  <p>
+    From observation, any map-like resource shares the following common point: 
+    For content or parts of content recognized as a map, there is "some kind of relationship" between its internal coordinates (image coordinates, SVG coordinates, canvas coordinates, etc.) and real-world coordinates (latitude, longitude, etc.).
+  </p>
+  <p>
+    This relationship can be diverse:
+  </p>
+  <ul>
+    <li>A mathematical projection function.</li>
+    <li>An officially registered projection.</li>
+    <li>A simple linear transformation.</li>
+    <li>A projection that changes dynamically through user operations of zoom or viewport.</li>
+    <li>Or a rough alignment without a numerical model.</li>
+  </ul>
+  <p>
+    The important point is that this relationship does not need to be defined in a unique way, and whether it is high-precision also depends on the case of the map.
+  </p>
+  <p>
+    In other words, the "minimal semantics" handled by this document is simply: 
+    Expressing the correspondence of "Internal Coordinates (coordinates of elements or regions corresponding to a map on Web content) ⇔ Real-world Coordinates" in a form that can be shared on the Web.
+  </p>
+</section>  
+<section id="basic-policy">
+  <h3>Basic Policy for Standardization</h3>
+  <p>
+    Considering the diversity of map usage on today's Web, standardizing a comprehensive map model or layer model is neither realistic nor desirable.
+    The purpose of this document draft is narrowed down strictly to the following single point:
+  </p>
+  <p style="margin-left: 2em; font-weight: bold;">
+    Define a minimal mechanism as a Web standard that allows any map-like resource to declare the relationship of "Internal Coordinates ↔ Real-world Coordinates".
+  </p>
+  <p>
+    This will allow:
+  </p>
+  <ul>
+    <li>Web content to place arbitrary elements using latitude and longitude.</li>
+    <li>The internal space of existing frameworks to be integrated with external HTML content.</li>
+    <li>"Non-GIS content," such as hand-drawn maps or old maps, to function as maps.</li>
+    <li>Coordination with existing Web APIs like the Geolocation API.</li>
+    <li>Loose coordination, integration, and compatibility between existing map frameworks and services without replacing them.</li>
+  </ul>
+  <p>
+    This approach aligns with the fundamental Web principles of "decentralization," "progressive enhancement," "backward compatibility," and "loose coupling".
+  </p>
+</section>  
+<section id="summary-section-2">
+  <h3>Summary</h3>
+  <p>
+    This chapter reorganized the concept of a "map" on the Web and clarified the "minimal commonality" that can be extracted from its diversity.
+  </p>
+  <p>
+    Additionally, the following policies were clarified:
+  </p>
+  <ul>
+    <li>Maps in Web browsers can remain diverse.</li>
+    <li>There is no need to unify projection methods.</li>
+  </ul>
+  <p>
+    Only one thing is needed:
+  </p>
+  <p style="margin-left: 2em;">
+    A minimal mechanism that browsers can understand, showing "how an arbitrary Web resource corresponds to the real world".
+  </p>
+  <p>
+    Once this foundation is in place, it will be possible to build a "Web-native geographic infrastructure" where existing map frameworks, MapML, HLA, and even hand-drawn maps can interoperate.
+  </p>
+</section>
+</section>  
+<section id="minimal-map-model-concepts">
+  <h2>Minimal Map Model Concepts </h2>
+  <p>
+    This chapter defines the minimal concepts of a map to be interpreted by a browser (Web User Agent). 
+  </p>
+  <p>
+    The objectives of this document are: 
+  </p>
+  <ul>
+    <li>To be applicable to existing map frameworks and services. </li>
+    <li>To encompass diverse map representations such as hand-drawn maps, SVG, Canvas, and MapML. </li>
+    <li>To focus on "providing geographical meaning to content displayed on the Web". </li>
+  </ul>
+<section id="definition-of-map">
+  <h3>Definition of a "Map" in Web User Agents</h3>
+  <p>
+    In this model, a <dfn>Map</dfn> is defined as a two-dimensional graphic representation visually displayed as a map on a Web User Agent.
+  </p>
+  <p>
+    A Map must satisfy the following conditions:
+  </p>
+  <ul>
+    <li>
+      <strong>Visual Graphic Content</strong>: It must be rendered content such as images, SVG, Canvas, or a combination of these two-dimensional representations.
+      Pure data sequences like GeoJSON [[GEOJSON]] [[rfc7946]] or table data are not considered a "<a>Map</a>".
+    </li>
+    <li>
+      <strong>User Recognition</strong>: The content must be in a state where it is actually rendered on the browser and can be recognized by the user as a map.
+    </li>
+    <li>
+      <strong>Geographic Positioning</strong>: Earthly positions must be specified as coordinates based on a geodetic datum.
+    </li>
+    <li>
+      <strong>WGS84 Compliance</strong>: The datum is defined using <strong>WGS84</strong> [[WGS84]] .
+      This aligns with the WGS84-fixity adopted by the Geolocation API [[geolocation]] and GeoJSON [[GEOJSON]] [[rfc7946]] to ensure consistency and interoperability. (Note: Locations other than Earth are currently out of scope.)
+    </li>
+    <li>
+      <strong>Coordinate Mapping</strong>: Each display element maintains a relationship between the <strong>CSS coordinate system</strong> and the <strong>geographic coordinate system</strong>.
+      This relationship can be expressed through transformation parameters or functions.
+    </li>
+    <li>
+      <strong>Minimal Semantics</strong>: The definition is strictly limited to the correspondence between the 2D representation and geographic information.
+      It does not include details of rendering methods, pan/zoom interactions, or specific projections.
+    </li>
+  </ul>
+  <p>
+    <strong>Supplementary Note</strong>: This definition includes hand-drawn maps, sketch maps, SVG-based graphics, and Canvas drawings, provided they are visualized as graphics in a browsing context.
+    "Data-only geographic information" is outside the scope of a Map.
+    While 3D maps may require separate consideration, the same logic applies to 3D models projected onto a 2D canvas.
+  </p>
+</section>
+<section id="map-components">
+  <h3>Components of a Map</h3>
+  <dl>
+    <dt><dfn>Map Container</dfn></dt>
+    <dd>
+      The 2D area rendered on the browser (e.g., <code>&lt;div&gt;</code>, <code>&lt;canvas&gt;</code>, <code>&lt;img&gt;</code>, <code>&lt;svg&gt;</code>, <code>&lt;iframe&gt;</code>).
+      It holds a <strong><a>Coordinate Transformation Strategy</a></strong> to map internal units between WGS84 [[WGS84]]  and CSS coordinates.
+    </dd>
+
+    <dt><dfn>Rendering Unit</dfn></dt>
+    <dd>
+      Individual elements placed within the Map (e.g., icons, markers, SVG paths, images, WebGL instances).
+      They are placed in CSS coordinates and correspond to WGS84 [[WGS84]] positions according to the strategy.
+      They maintain compatibility with the Geolocation API and GeoJSON [[GEOJSON]].
+    </dd>
+
+    <dt><dfn data-lt="Geo-reference|Geographic Coordinates">Geo-reference (Geographic Coordinates)</dfn></dt>
+    <dd>
+      Represents the position on Earth (Datum) indicated by each unit.
+      It uses <strong>WGS84</strong> [[WGS84]] to align with Web standards.
+    </dd>
+
+    <dt><dfn>Coordinate Transformation Strategy</dfn></dt>
+    <dd>
+      Transformation parameters (e.g., LUT, matrix) or functions (e.g., JS Worklet) associated with the Map Container.
+      It expresses the relationship between CSS and WGS84 [[WGS84]] coordinates. This approach is GPU-friendly, secure, and applicable to complex projections or sketch maps.
+    </dd>
+  </dl>
+  <p>
+    <strong>Interoperability</strong>: Units following this model are compatible with various map representations and standard coordinate information like the Geolocation API.
+  </p>
+</section>
+<section id="principles-of-minimal-extension">
+  <h3>Principles of Minimal Extension</h3>
+  <p>
+    This document follows these principles to design a minimal common foundation:
+  </p>
+  <ul>
+    <li>
+      <strong>Minimization of Dynamic Functions</strong>: Dynamic features such as pan, zoom, tiling, and animations are not included in the core.
+      These are subjects for independent, progressive consideration or can be extended via JavaScript Worklets.
+    </li>
+    <li>
+      <strong>Abstraction of Projections and Coordinate Systems</strong>: Mathematical projections and CRS specifications are not internal UA functions in the minimal model.
+      Instead, the relationship is expressed through parametric transformations (including LUTs) or functions, applicable to any projection or sketch map.
+    </li>
+    <li>
+      <strong>Ensuring Safety</strong>: Coordinate transformations are executed safely via GPU-friendly LUTs or worklet processing, relying on standard Web security measures like CORS.
+    </li>
+    <li>
+      <strong>Emphasis on Interoperability</strong>: Components are designed to be usable across MapML, Leaflet, MapLibre, Google Maps, CesiumJS, HLA, and hand-drawn maps based on the same conceptual foundation.
+    </li>
+    <li>
+      <strong>Limitation to Minimal Semantics</strong>: This model defines only the correspondence between internal coordinates and geographic coordinates (WGS84 [[WGS84]] ).
+      By excluding rendering details and interaction behaviors, it provides a consistent foundation for diverse map expressions.
+    </li>
+  </ul>
+</section>
+<section id="coordinate-transformation-strategies">
+  <h3>Deep Dive into Coordinate Transformation Strategies (with Samples)</h3>
+  <p>
+    In this document, CSS properties such as <code>geo-conversion-worklet</code>, <code>geo-conversion-parameter</code>, and <code>geo-location</code>, as well as their associated syntax (e.g., <code>matrix(...)</code>, <code>lut(...)</code>, <code>[longitude, latitude, CSS-X, CSS-Y]</code>), are currently presented as <strong>conceptual placeholders</strong> to explain the technical approach.
+  </p>
+  <p>
+    While these notations take into account future compatibility with modules like CSS Values and Units or CSS Houdini, they have <strong>not been detailed as a formal specification</strong>.
+    The primary focus of this model lies in the minimal semantics behind these notations and the strategies for secure, high-performance implementation.
+    The determination of specific syntax should occur during the work phase of the CSS Working Group after an agreement is reached on the foundational standardizing policy of this Minimal Model.
+  </p>
+  
+  <p>
+  These strategies are presented as alternatives rather than a hierarchy.
+  </p>
+
+<section id="functional-strategy-worklet">
+  <h4>Functional Strategy (Worklet)</h4>
+  <p>
+    This strategy involves providing the Map container with a transformation strategy that dynamically converts the <a>Geographic Coordinates</a> of child elements into CSS coordinates.
+  </p>
+  <p>
+    This approach leverages the <strong>Worklet</strong> infrastructure, ensuring technical alignment and future compatibility with the <strong>CSS Houdini</strong> APIs, specifically the CSS Painting API [[CSS-PAINT-API-1]] and CSS Layout API [[CSS-LAYOUT-API-1]].
+  </p>
+      
+    <pre class="example css" title="CSS Example">
+.dynamic-map-container {
+  position: relative;
+  /* Referencing a coordinate transformation function defined as an external Worklet */
+  geo-conversion-worklet: url('my-complex-projection-v2.js');
+}
+
+.marker-poi {
+  position: absolute;
+  geo-location: 35.6586deg 139.7454deg;
+}
+    </pre>
+
+    <pre class="example html" title="HTML Example">
+&lt;div class="map-container dynamic-map-container"&gt;
+  &lt;div class="marker-poi"&gt;📍&lt;/div&gt;
+&lt;/div&gt;
+    </pre>
+
+    <pre class="example javascript" title="my-complex-projection-v2.js">
+class transform {
+  constructor(){}
+  transform(longitude, latitude) {
+    // ... complex projection logic ...
+    return {x, y};
+  }
+  inverse(x, y) {
+    // ... inverse projection logic ...
+    return {longitude, latitude};
+  }
+}
+export {transform};
+    </pre>
+
+    <h5>Key Characteristics:</h5>
+    <ul>
+      <li>Because it references external JavaScript as a Worklet, it can be executed at high speed natively by the browser while remaining secure.</li>
+      <li>It utilizes a Turing-complete processing system.</li>
+      <li>It can encompass advanced coordinate transformations, including non-linear transformations such as UTM or the Goode homolosine projection.</li>
+    </ul>
+  </section>
+<section id="matrix-parametric-transformation">
+  <h4>matrix: Parametric Transformation</h4>
+  <p>
+    This pattern allows for linear coordinate transformations using a simple designation similar to existing CSS matrix syntax.
+  </p>
+  
+  <pre class="example css" title="CSS Example">
+.affine-map-container {
+  position: relative;
+  /* Coordinate transformation using existing CSS matrix(a,b,c,d,e,f) syntax */
+  geo-conversion-parameter: matrix(
+    0.0001,   /* a */
+    -0.00005, /* b */
+    0.00003,  /* c */
+    0.00012,  /* d */
+    -1000,    /* e (Translate X) */
+    25000     /* f (Translate Y) */
+  );
+}
+  </pre>
+
+  <pre class="example html" title="HTML Example">
+&lt;div class="map-container affine-map-container"&gt;
+  &lt;div class="marker-poi" style="geo-location: 35.682 139.764"&gt;📍&lt;/div&gt;
+&lt;/div&gt;
+  </pre>
+
+  <h5>Key Characteristics:</h5>
+  <ul>
+    <li>High compatibility with traditional CSS transformations and simple to specify.</li>
+    <li>Suitable for lightweight operations on small-scale maps or simplified sketch maps.</li>
+  </ul>
+</section>
+<section id="lut-parametric-transformation">
+  <h4>LUT (Lookup Table): Parametric Transformation</h4>
+  <p>
+    This approach involves directly writing a correspondence table between "geographic coordinates ⇔ CSS coordinates".
+  </p>
+  
+  <pre class="example css" title="CSS Example">
+.inline-sketch-map {
+  position: relative;
+  geo-conversion-parameter: lut(
+    [139.764, 35.682,  50, 100],
+    [139.767, 35.680,  350, 450],
+    /* ... additional points ... */
+    [lngN, latN, XcssN, YcssN]
+  );
+}
+  </pre>
+
+  <pre class="example html" title="HTML Example">
+&lt;div class="map-container inline-sketch-map"&gt;
+  &lt;div class="marker-poi" style="geo-location: 35.681 139.765"&gt;📍&lt;/div&gt;
+&lt;/div&gt;
+  </pre>
+
+  <h5>Key Characteristics:</h5>
+  <ul>
+    <li>Supports arbitrary transformations that cannot be expressed in functional forms, such as hand-drawn maps.</li>
+    <li>It can serve as a performance and security measure to complement functional strategies.</li>
+    <li>It is also envisioned that these LUT-type parameters can be generated by pre-calculating the results of a functional strategy for internal operation.</li>
+  </ul>
+</section>
+<section id="lut-json-file-reference">
+  <h4>LUT JSON File Reference: Parametric Transformation</h4>
+  <p>
+    For larger datasets, the LUT can be referenced as an external JSON file.
+  </p>
+  
+  <pre class="example css" title="CSS Example">
+.large-gis-map {
+  position: relative;
+  geo-conversion-parameter: url('city-center-64x64-lut.json');
+}
+  </pre>
+
+  <pre class="example html" title="HTML Example">
+&lt;div class="map-container large-gis-map"&gt;
+  &lt;div class="marker-poi" style="geo-location: 35.6895 139.6917"&gt;📍&lt;/div&gt;
+&lt;/div&gt;
+  </pre>
+
+  <h5>Key Characteristics:</h5>
+  <ul>
+    <li>Effective for maps with large amounts of data or detailed city-center maps.</li>
+    <li>Like Worklets, these are loaded securely by the browser.</li>
+  </ul>
+</section>
+<section id="internal-conversion">
+  <h4>Internal Conversion from Functional Strategy to LUT</h4>
+  <p>
+    It is assumed that a one-way conversion from a functional strategy to a LUT can be executed within the User Agent (UA) at an appropriate timing.
+  </p>
+  <p>
+    Specifically, a LUT is generated as a <strong>Computed Value</strong> from the functional strategy.
+    This approach provides several technical advantages:
+  </p>
+  <ul>
+    <li>
+      <strong>Hardware Acceleration</strong>: It allows for acceleration via GPU interpolation or WebGL/WebGPU rendering.
+    </li>
+    <li>
+      <strong>Enhanced Security</strong>: It enhances security by removing complex JavaScript logic from the immediate rendering pipeline after the LUT has been generated.
+    </li>
+  </ul>
+</section>
+<section id="pattern-summary">
+  <h4>Pattern Summary</h4>
+  <p>
+    The following table summarizes the transformation patterns defined in this model:
+  </p>
+  <table class="simple">
+    <thead>
+      <tr>
+        <th>Pattern</th>
+        <th>Syntax</th>
+        <th>Characteristics</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Functional Worklet</strong></td>
+        <td><code>geo-conversion-worklet: url('...')</code></td>
+        <td>Supports complex projections and dynamic calculations; GPU-friendly and secure.</td>
+      </tr>
+      <tr>
+        <td><strong>matrix</strong></td>
+        <td><code>geo-conversion-parameter: matrix(...)</code></td>
+        <td>Utilizes existing CSS syntax; suitable for lightweight, small-scale, or large-zoom maps.</td>
+      </tr>
+      <tr>
+        <td><strong>LUT (Inline)</strong></td>
+        <td><code>geo-conversion-parameter: lut(...)</code></td>
+        <td>Directly references pre-calculated coordinate tables; allows for GPU interpolation.</td>
+      </tr>
+      <tr>
+        <td><strong>LUT JSON</strong></td>
+        <td><code>geo-conversion-parameter: url('...')</code></td>
+        <td>For large-scale data and external file management; securely referenced.</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    In all cases, the <a>Coordinate Transformation Strategy</a> is held by the <strong><a>Map container</a></strong>. 
+    Child elements are automatically converted to CSS coordinates by holding a <code>geo-location</code> style property. 
+    Performance, security, convenience, and use cases can be adjusted by choosing the appropriate format (LUT, matrix, or Worklet).
+  </p>
+</section>
+</section>
+<section id="viewport-clipping-model">
+  <h3>Viewport and Clipping Model (clipBox)</h3>
+  <p>
+    This document clearly separates the map's "display area" from its "content (world)". 
+    This redefines the relationship between the SVG viewport and viewBox within the context of the HTML/CSS box model.
+  </p>
+  <ul>
+    <li>
+      <strong>clipBox (Viewport)</strong>: Acts as the "window" for observing the map. 
+      Its role is to clip the vast map content behind it using <code>overflow: hidden</code>.
+    </li>
+    <li>
+      <strong>map-container (World)</strong>: The element that holds the actual map content and graphics. 
+      The association with geographic coordinates (<code>geo-conversion-*</code>) is applied to this element.
+    </li>
+  </ul>
+  <p>
+    Through this separation, map panning (movement) and zooming (scaling) are performed via the <code>left</code>/<code>top</code> or <code>transform</code> properties of the <code>map-container</code> element, while the <code>clipBox</code> remains a static window. 
+    This model translates the SVG <code>viewBox</code> concept into HTML/CSS by keeping the "window" fixed and moving the "world" behind it.
+  </p>
+
+  <pre class="example html" title="Implementation Example: HTML Structure">
+&lt;div class="clipBox"&gt;
+  &lt;div class="map-container"&gt;
+    &lt;!-- Map content and markers go here --&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+  </pre>
+
+  <pre class="example css" title="Implementation Example: CSS Styling">
+/* The clipBox serves strictly as a static "window" */
+.clipBox {
+  width: 500px;
+  height: 400px;
+  overflow: hidden;  /* This defines the clipping */
+  position: relative;
+  border: 1px solid #ccc;
+}
+
+/* The map-container represents the "world" and handles movement/scaling */
+.map-container {
+  position: absolute;
+  width: 3000px;    /* A vast map plane */
+  height: 2000px;
+
+  /* Panning is expressed via left/top or transform */
+  left: -600px;
+  top: -400px;
+
+  /* Geographic binding */
+  geo-conversion-parameter: url('tokyo-lut.json');
+}
+  </pre>
+</section>
+<section id="element-local-coordinate-space">
+  <h3>Definition of Element-local Coordinate Space</h3>
+  <p>
+    The "CSS coordinates" referenced by the <code>geo-conversion-*</code> properties point to the <strong>element-local coordinate space</strong>, defined by the following rules:
+  </p>
+  <ul>
+    <li>
+      <strong>Origin</strong>: The top-left corner of the <code>map-container</code> element's padding box is defined as (0, 0).
+    </li>
+    <li>
+      <strong>Range</strong>: The plane is determined by the used width and used height.
+    </li>
+    <li>
+      <strong>Invariance</strong>: This coordinate space is entirely unaffected by the element’s own <code>left</code>/<code>top</code> positioning, visual deformation via <code>transform</code>, or clipping by the <code>clipBox</code>.
+    </li>
+  </ul>
+  <p>
+    <strong>Design Intent</strong>: This definition ensures that <code>geo-conversion</code> does not need to concern itself with the specific content the element is rendering (such as image pixels or internal SVG coordinates). 
+    Instead, it focuses solely on the conversion between the <strong>CSS plane occupied by the element</strong> and the <strong>geographic space</strong>.
+  </p>
+  <p>
+    This allows for a completely consistent common standard across different element types, such as <code>&lt;div&gt;</code>, <code>&lt;img&gt;</code>, <code>&lt;canvas&gt;</code>, and <code>&lt;svg&gt;</code>.
+  </p>
+</section>
+</section>
+<section id="functional-utility">
+  <h2>Functional Utility of Minimal Map Model (Level 1)</h2>
+  <p>
+    This model goes beyond simple coordinate mapping. By enabling the Web platform to natively understand geographic space, it provides functionality that is unachievable with existing JavaScript libraries.
+    To minimize implementation complexity, Level 1 focuses on placement and transformation within a single layer, prohibiting the nesting of Map Containers.
+  </p>
+
+<section id="native-geolocation-layout">
+  <h3>Native Geolocation Layout (CSS Integration)</h3>
+  <p>
+    The most significant practical benefit is high-precision display synchronization achieved by the browser's layout engine directly interpreting geographic coordinates.
+  </p>
+  <ul>
+    <li>
+      <strong>geo-location Property</strong>: By specifying <a>Geographic Coordinates</a> for a <a>Rendering Unit</a> (child element), the browser automatically calculates the appropriate coordinates within the container's local coordinate space to place the element.
+    </li>
+    <li>
+      <strong>Synchronization via Compositor Thread</strong>: For user interactions like panning and zooming, the browser updates placement without involving the JavaScript main thread.
+      This physically eliminates the "jitter" or "shaking" between the map and markers often seen in traditional libraries, providing an extremely smooth visual experience.
+    </li>
+  </ul>
+
+  <section id="example-pin-placement">
+    <h4>Implementation Example: Accurate Pin Placement</h4>
+    <p>
+      This example demonstrates combining the <code>geo-location</code> property with the existing <code>translate</code> property to align the tip of a pin marker accurately.
+    </p>
+
+    <pre class="example html" title="HTML Structure">
+&lt;div class="map-container"&gt;
+  &lt;div class="pin-marker"&gt;📍&lt;/div&gt;
+&lt;/div&gt;
+    </pre>
+
+    <pre class="example css" title="CSS Styling">
+.pin-marker {
+  position: absolute;
+
+  /* 1. Geographic Coordinate Specification */
+  /* The browser automatically converts this to CSS coordinates using the container's strategy */
+  geo-location: 35.6586deg 139.7454deg;
+
+  /* 2. Fine-tuning Anchor Position using existing properties */
+  /* Aligns the tip of the pin (bottom center) with the latitude/longitude */
+  translate: -50% -100%;
+
+  /* 3. Smooth behavior during zoom */
+  /* Movements "stick" to the map because they are synchronized on the compositor thread */
+  transition: transform 0.1s linear;
+}
+    </pre>
+  </section>
+</section>
+<section id="coordinate-transformation-interface">
+  <h3>Coordinate Transformation Interface (API Extensions)</h3>
+  <p>
+    To allow developers to easily perform dynamic interactions and spatial calculations, the following standard methods are added to the Map Container element.
+    This removes the need for content-side heavy projection libraries.
+  </p>
+  <dl>
+    <dt><code>MapContainer.getGeoLocation(x, y)</code></dt>
+    <dd>
+      Takes coordinates in the container's local coordinate space (in CSS pixels) and returns the corresponding geographic coordinates (WGS84 [[WGS84]] ).
+    </dd>
+
+    <dt><code>MapContainer.getCSSLocation(longitude, latitude)</code></dt>
+    <dd>
+      Takes geographic coordinates and returns the latest CSS coordinates within the container based on the current zoom level and strategy.
+    </dd>
+  </dl>
+  <p>
+    These methods ensure consistent results by internally calling the <strong>Coordinate Transformation Strategies</strong> (Worklet/LUT) defined in the model.
+  </p>
+</section>
+<section id="css-orthogonality">
+  <h3>Maintaining Orthogonality with Existing CSS Properties</h3>
+  <p>
+    This model does not introduce new properties for map-specific anchoring. 
+    Instead, it achieves flexible placement by combining geographic positioning with the existing CSS box model and transform properties.
+  </p>
+  <ul>
+    <li>
+      <strong>Self-Offset Utilization</strong>: By applying the existing <code>translate</code> property to an element placed via <code>geo-location</code>, accurate anchoring can be achieved regardless of the icon's size.
+    </li>
+    <li>
+      <strong>Inheritance of Transforms</strong>: Standard CSS properties like <code>rotate</code> and <code>scale</code> apply normally to elements placed via geographic coordinates.
+    </li>
+  </ul>
+</section>
+<section id="semantic-accessibility">
+  <h3>Semantic Accessibility (A11y)</h3>
+  <p>
+    When the browser understands the "real-world position" of each <a>Rendering Unit</a>, the accessibility tree can be constructed spatially. 
+    This allows the browser to move beyond treating map content as a simple image and instead recognize it as an organized geographic space.
+  </p>
+  <p>
+    <strong>Automatic Spatial Navigation Support</strong>: Because the browser natively understands the geographic location of elements, assistive technologies can automatically present spatial context to the user, such as:
+  </p>
+  <ul>
+    <li>"Tokyo Tower (landmark) is displayed near the center of the screen."</li>
+    <li>"There are 3 restaurant markers within 500m of your current location."</li>
+    <li>"The map has been scrolled north. Mount Fuji has entered the new area."</li>
+  </ul>
+  <p>
+    This elevates map content, previously recognized only as an image, into an "explorable, meaningful space" for users with visual impairments, providing them with the necessary context to navigate and understand the relationship between different geographic points.
+  </p>
+</section>
+<section id="limitations-level-1">
+  <h3>Limitations in Level 1 (Simplification of Implementation)</h3>
+  <p>
+    To ensure robustness and security, and to minimize the initial burden on browser implementers, Level 1 includes the following restriction:
+  </p>
+  <ul>
+    <li>
+      <strong>Prohibition of Nesting</strong>: A Map Container cannot be placed inside another Map Container.
+    </li>
+  </ul>
+  <p>
+    This restriction avoids high-load, complex processing involving "inverse projection and re-projection from already projected figures," thereby maintaining a simple and predictable rendering pipeline for the User Agent. 
+    By keeping the model to a single layer in Level 1, we ensure that the performance benefits of GPU-friendly transformations can be realized without the overhead of nested coordinate system calculations.
+  </p>
+</section>
+</section>
+
+<section id="use-cases">
+  <h2>Use Cases and Implementation Examples</h2>
+  <p>
+    This model allows for the handling of everything from rigorous GIS (Geographic Information Systems) to casual illustrative expressions within the same framework.
+    This section demonstrates the different uses of coordinate transformation strategies through two contrasting scenarios.
+  </p>
+
+  <section id="case-a-hand-drawn-map">
+    <h3>Case A: Hand-drawn Tourist Illustration Map</h3>
+    <p>
+      This scenario involves publishing a "hand-drawn map" on the Web—which may not be geodetically accurate but is visually engaging—and displaying the user's current location.
+    </p>
+    <ul>
+      <li>
+        <strong>Challenge</strong>: Hand-drawn maps do not have a constant scale, making it impossible to define them using mathematical projection formulas (projection functions).
+      </li>
+      <li>
+        <strong>Solution</strong>: Adopt the <code>geo-conversion-parameter: lut()</code> (Look-Up Table) strategy.
+      </li>
+      <li>
+        <strong>Implementation Image</strong>: A correspondence table is created by mapping several points on the map (e.g., major intersections or buildings) to their "CSS coordinates on the image" and their "actual latitude and longitude." The browser then interpolates between these points.
+      </li>
+      <li>
+        <strong>Benefits</strong>: Even for non-GIS content, it becomes possible to place markers with <code>geo-location</code> or coordinate with the Geolocation API to show where the user is currently located on the illustration.
+      </li>
+    </ul>
+  </section>
+
+  <section id="case-b-real-time-gis-weather">
+    <h3>Case B: Real-time GIS Weather Layer</h3>
+    <p>
+      This scenario involves displaying dynamic observation posts over weather data that uses an advanced projection method (e.g., Lambert Conformal Conic projection).
+    </p>
+    <ul>
+      <li>
+        <strong>Challenge</strong>: Advanced projection calculations with significant distortion are required, necessitating both high performance and security.
+      </li>
+      <li>
+        <strong>Solution</strong>: Use the <code>geo-conversion-worklet</code>.
+      </li>
+      <li>
+        <strong>Implementation Image</strong>: Complex coordinate transformation logic is defined as a JavaScript Worklet and executed separately from the main thread. Numerous observation points (Rendering Units) are assigned a <code>geo-location</code>.
+      </li>
+      <li>
+        <strong>Benefits</strong>: Because the placement updates are synchronized on the browser's compositor thread, observation posts will "stick" to the background without any jitter or lag, even during intense panning or zooming. By internally converting results to a LUT, the system benefits from high-speed GPU rendering.
+      </li>
+    </ul>
+  </section>
+</section>
+
+</body>
+</html>
