@@ -1,4 +1,4 @@
-# Universal Web Video Player
+# [Universal Web Video Player](./moviePlayer.html)
 
 A lightweight, single-page video player designed for GitHub Pages and static web hosting. Supports **HLS (.m3u8)** and **MP4 (.mp4)** with URL hash-based parameter controls and multi-language VTT subtitles.
 
