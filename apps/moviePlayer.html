@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Universal Video Player</title>
+  <!-- hls.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .player-container {
+      width: 100%;
+      max-width: 960px;
+      padding: 10px;
+    }
+    video {
+      width: 100%;
+      height: auto;
+      max-height: 85vh;
+      background-color: #111;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+    /* 字幕のデザイン調整 */
+    video::cue {
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="player-container">
+    <video id="video" controls preload="metadata"></video>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const video = document.getElementById('video');
+
+      // URLハッシュの解析 (#src=...&t=...&title=...&vtt=...)
+      function parseHash() {
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+
+        return {
+          src: params.get('src') || params.get('url') || 'stream.m3u8',
+          time: parseFloat(params.get('t') || params.get('start') || '0'),
+          title: params.get('title'),
+          vtt: params.get('vtt')
+        };
+      }
+
+      const config = parseHash();
+
+      // ウィンドウタイトルの設定
+      if (config.title) {
+        document.title = decodeURIComponent(config.title);
+      }
+
+      // VTT字幕トラックの動的生成
+      function setupSubtitles(vttParam) {
+        if (!vttParam) return;
+
+        const items = vttParam.split(';');
+
+        items.forEach((item, index) => {
+          if (!item.trim()) return;
+
+          const parts = item.split(':');
+          const lang = parts[0]?.trim();
+          const src = parts[1]?.trim();
+          const label = parts[2]?.trim() || lang.toUpperCase();
+
+          if (lang && src) {
+            const track = document.createElement('track');
+            track.kind = 'subtitles';
+            track.srclang = lang;
+            track.src = src;
+            track.label = label;
+
+            if (index === 0) {
+              track.default = true;
+            }
+
+            video.appendChild(track);
+          }
+        });
+      }
+
+      // 動画ソースのロード判定（HLS vs MP4）
+      function loadSource(src, startTime) {
+        setupSubtitles(config.vtt);
+
+        // 拡張子またはURLからMP4かどうか判定
+        const isMp4 = src.split('?')[0].endsWith('.mp4');
+
+        if (isMp4) {
+          // --- MP4 直接再生フォールバック ---
+          video.src = src;
+          if (startTime > 0) {
+            video.addEventListener('loadedmetadata', () => {
+              video.currentTime = startTime;
+            }, { once: true });
+          }
+        } else if (Hls.isSupported()) {
+          // --- hls.js による HLS (.m3u8) 再生 ---
+          const hls = new Hls({
+            startPosition: startTime > 0 ? startTime : -1
+          });
+
+          hls.loadSource(src);
+          hls.attachMedia(video);
+
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          // --- Safari（Native HLS）環境 ---
+          video.src = src;
+          if (startTime > 0) {
+            video.addEventListener('loadedmetadata', () => {
+              video.currentTime = startTime;
+            }, { once: true });
+          }
+        } else {
+          alert('お使いのブラウザはこの動画形式の再生に対応していません。');
+        }
+      }
+
+      loadSource(config.src, config.time);
+
+      // ハッシュ変更時に自動リロード
+      window.addEventListener('hashchange', () => {
+        window.location.reload();
+      });
+    });
+  </script>
+
+</body>
+</html>
