@@ -73,7 +73,7 @@
       }
 
       // VTT字幕トラックの動的生成
-      function setupSubtitles(vttParam) {
+      function setupSubtitles(vttParam, videoSrc) {
         if (!vttParam) return;
 
         const items = vttParam.split(';');
@@ -83,14 +83,25 @@
 
           const parts = item.split(':');
           const lang = parts[0]?.trim();
-          const src = parts[1]?.trim();
+          const rawSrc = parts[1]?.trim();
           const label = parts[2]?.trim() || lang.toUpperCase();
 
-          if (lang && src) {
+          if (lang && rawSrc) {
+            let absoluteVttUrl = rawSrc;
+
+            // 動画URL(videoSrc)を基準にして相対パスを解決
+            try {
+              // ページ自体のURLではなく動画URLを基準(Base)にしてURLを作成
+              const baseUrl = new URL(videoSrc, window.location.href);
+              absoluteVttUrl = new URL(rawSrc, baseUrl).href;
+            } catch (e) {
+              console.error('VTT URL Resolution Failed:', e);
+            }
+
             const track = document.createElement('track');
             track.kind = 'subtitles';
             track.srclang = lang;
-            track.src = src;
+            track.src = absoluteVttUrl; // 解決後の絶対URLをセット
             track.label = label;
 
             if (index === 0) {
@@ -104,7 +115,8 @@
 
       // 動画ソースのロード判定（HLS vs MP4）
       function loadSource(src, startTime) {
-        setupSubtitles(config.vtt);
+        // 動画URLを渡して字幕パスを解決・セットアップ
+        setupSubtitles(config.vtt, src);
 
         // 拡張子またはURLからMP4かどうか判定
         const isMp4 = src.split('?')[0].endsWith('.mp4');
