@@ -1,0 +1,269 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.000
+It looks no different from a typical map site.
+
+1
+00:00:05.000 --> 00:00:09.000
+The layers are listed in this list box.
+
+1
+00:00:09.000 --> 00:00:18.000
+Each layer is a hyperlink, and each one refers to content from a different domain.
+
+1
+00:00:18.000 --> 00:00:26.000
+For example, this is rainfall information from the Meteorological Office. As you can see, there are many layers.
+
+1
+00:00:26.000 --> 00:00:31.000
+This is the original page being referred to.
+
+1
+00:00:31.000 --> 00:00:43.000
+This is a weather chart. The weather chart is drawn in Stereographic Projection, but its transformation is also made in this way.
+
+1
+00:00:43.000 --> 00:00:50.000
+This is a hazard map showing tsunami hazard levels from the Ministry of Land, Infrastructure, Transport and Tourism.
+
+1
+00:00:50.000 --> 00:00:52.000
+This is the original page being referred to.
+
+1
+00:00:54.000 --> 00:01:07.000
+This is information from live cameras on rivers. You can get not only the location of the cameras, but also their respective live images.
+
+1
+00:01:11.000 --> 00:01:17.000
+Next, let's look at one of the effective use cases for hyperlayering.
+
+1
+00:01:17.000 --> 00:01:28.000
+Let us superimpose a page that provides information on the damage caused by the Noto Peninsula earthquake of January 2024, using a synthetic aperture radar satellite.
+
+1
+00:01:28.000 --> 00:01:36.000
+First, we trace the damaged area from this photo and overlay it on the map.
+
+1
+00:01:36.000 --> 00:01:42.000
+When zoomed in, we can get a detailed damage for each house.
+
+1
+00:01:42.000 --> 00:01:46.000
+However, this is difficult to do with the original page alone.
+
+1
+00:01:46.000 --> 00:01:55.000
+As you can see, since hyperlayering can be expected to have great benefits, it may require a newly discussion on copyrights.
+
+1
+00:01:56.000 --> 00:02:03.000
+In fact, I have built and tested HLA layers for more than five hundred different systems.
+
+1
+00:02:03.000 --> 00:02:10.000
+They use different data and mapping technologies, so they cannot simply be plugged into the same map.
+
+1
+00:02:10.000 --> 00:02:15.000
+To overcome these differences, HLA uses an architecture called Layers as Web Apps.
+
+1
+00:02:15.000 --> 00:02:21.000
+Each layer is an independent Web App that can handle its own data and behavior.
+
+1
+00:02:21.000 --> 00:02:25.000
+I kept building these small Web Apps, one by one.
+
+1
+00:02:25.000 --> 00:02:32.000
+They can absorb the differences between the underlying systems, while working together on the same map.
+
+1
+00:02:32.000 --> 00:02:38.000
+As a result, more than two hundred of these Layers as Web Apps are available for public release.
+
+1
+00:02:41.000 --> 00:02:45.000
+Now, let me show you one more example from Canada.
+
+1
+00:02:45.000 --> 00:02:50.000
+This content was built by the community, showing that Hyper Layering and Layers as Web Apps are
+
+1
+00:02:50.000 --> 00:02:54.000
+now being explored beyond Japan.
+
+1
+00:02:54.000 --> 00:02:58.000
+First, let me display it in the familiar Plate Carrée projection.
+
+1
+00:02:58.000 --> 00:03:02.000
+But actually, we can do something more.
+
+1
+00:03:07.000 --> 00:03:13.000
+This same content can also be displayed in the Lambert projection used for Canada.
+
+1
+00:03:13.000 --> 00:03:16.000
+And this is the interesting part.
+
+1
+00:03:16.000 --> 00:03:23.000
+A map projection can be implemented as a function inside a Layers as Web Apps layer.
+
+1
+00:03:23.000 --> 00:03:31.000
+This means that layers using different projections can be integrated and displayed together in any projection.
+
+1
+00:03:33.000 --> 00:03:35.000
+Now, let's look at another kind of layer.
+
+1
+00:03:35.000 --> 00:03:40.000
+There is a powerful technique called QuadTree Composite Tiling.
+
+1
+00:03:40.000 --> 00:03:42.000
+Let me show you what it can do.
+
+1
+00:03:42.000 --> 00:03:48.000
+This time, I am using OpenStreetMap as a source of thematic data.
+
+1
+00:03:48.000 --> 00:03:56.000
+OpenStreetMap is not only a great basemap. It is also a remarkably rich source of thematic data.
+
+1
+00:03:56.000 --> 00:04:01.000
+Here are parking facilities. Even at this scale, we can see their spatial distribution.
+
+1
+00:04:01.000 --> 00:04:09.000
+As we zoom in, individual features appear as vector points.
+
+1
+00:04:13.000 --> 00:04:22.000
+And here are drugstores. Again, we can see their distribution first, and then the individual features.
+
+1
+00:04:22.000 --> 00:04:28.000
+QuadTree Composite Tiling is particularly well suited to this kind of thematic data.
+
+1
+00:04:28.000 --> 00:04:35.000
+When the data itself becomes the subject of the map, its spatial distribution becomes meaningful.
+
+1
+00:04:36.000 --> 00:04:39.000
+So, how is this different from clustering?
+
+1
+00:04:39.000 --> 00:04:42.000
+Here is the same data with clustering.
+
+1
+00:04:42.000 --> 00:04:47.000
+Clustering is useful for finding individual points.
+
+1
+00:04:50.000 --> 00:04:54.000
+Now, the same data with QuadTree Composite Tiling.
+
+1
+00:04:54.000 --> 00:04:59.000
+Instead of simply grouping the points, it represents their spatial distribution.
+
+1
+00:04:59.000 --> 00:05:04.000
+And we can also switch to a heatmap representation.
+
+1
+00:05:11.000 --> 00:05:16.000
+And QuadTree Composite Tiling is not limited to point data.
+
+1
+00:05:16.000 --> 00:05:19.000
+Here are bus routes as the subject of the map.
+
+1
+00:05:19.000 --> 00:05:23.000
+The same approach works for linear features as well.
+
+1
+00:05:23.000 --> 00:05:27.000
+There is another interesting aspect of QuadTree Composite Tiling.
+
+1
+00:05:27.000 --> 00:05:31.000
+It is not tied to a particular implementation.
+
+1
+00:05:31.000 --> 00:05:36.000
+It can be implemented as Layers as Web Apps, a static hyperdocument,
+
+1
+00:05:36.000 --> 00:05:39.000
+or a dynamically generated service.
+
+1
+00:05:39.000 --> 00:05:45.000
+The important point is that a layer is free to choose its own implementation.
+
+1
+00:05:48.000 --> 00:05:54.000
+Moreover, the capabilities of Hyper Layering go beyond simply overlaying map layers.
+
+1
+00:05:54.000 --> 00:06:01.000
+It even allows geospatial operations to be performed between arbitrary layers that are superimposed.
+
+1
+00:06:01.000 --> 00:06:04.000
+First, let's display the layers of the clinics.
+
+1
+00:06:04.000 --> 00:06:13.000
+Next, a layer of seismic intensity distribution for the Noto Peninsula earthquake of January 2024 is displayed.
+
+1
+00:06:17.000 --> 00:06:22.000
+Then, we can perform operations between these layers to
+
+1
+00:06:22.000 --> 00:06:28.000
+extract medical facilities that have been subjected to major quakes of intensity 6 or higher.
+
+1
+00:06:29.000 --> 00:06:34.000
+The operations are performed on the client side with crawling.
+
+1
+00:06:34.000 --> 00:06:41.000
+Completed. Results are marked in red and CSV data is also displayed.
+
+1
+00:06:43.000 --> 00:06:46.000
+The demonstration is now over.
+
+1
+00:06:46.000 --> 00:06:52.000
+What you have seen is how independent Web resources can become rich, interactive map layers —
+
+1
+00:06:52.000 --> 00:06:57.000
+and how those layers can be processed together in the browser.
+
+1
+00:06:57.000 --> 00:07:00.000
+This is what Hyper Layering makes possible.

@@ -1,0 +1,601 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.000
+Today, I want to start with a question. What if the Map itself became the Web? 
+
+1
+00:00:05.000 --> 00:00:10.000
+This is a question I have been thinking about for more than 30 years. 
+
+1
+00:00:10.000 --> 00:00:14.000
+Why did I start asking this question? Why have I kept working on it for so long? 
+
+1
+00:00:14.000 --> 00:00:20.000
+And, perhaps more importantly, why is it time to ask this question again now? 
+
+1
+00:00:20.000 --> 00:00:23.000
+That is the story I want to tell you today.
+
+1
+00:00:24.000 --> 00:00:28.000
+ First, let me briefly introduce myself. I'm Satoru Takagi. 
+ 
+1
+00:00:28.000 --> 00:00:38.000
+I have spent much of my career at KDDI, a network operator, 
+ 
+1
+00:00:32.000 --> 00:00:38.000
+working on technology research and development, as well as real-world systems. 
+
+1
+00:00:38.000 --> 00:00:43.000
+In the early 1990s, I started my career working on technologies 
+
+1
+00:00:43.000 --> 00:00:49.000
+for underwater robots and the construction and maintenance of submarine cables.
+
+1
+00:00:49.000 --> 00:00:54.000
+Around that time, the World Wide Web was rapidly emerging. 
+
+1
+00:00:54.000 --> 00:01:00.000
+I started wondering, “Could we use this new technology for these kinds of applications?”
+
+1
+00:01:00.000 --> 00:01:04.000
+That led me into Web technology, and eventually into Web GIS. 
+
+1
+00:01:04.000 --> 00:01:14.000
+Since then, I have worked both on building and operating real systems, and on Web standardization through the W3C. 
+
+1
+00:01:14.000 --> 00:01:18.000
+And since I came up with the idea of Hyper-Layering in 1995,
+
+1
+00:01:18.000 --> 00:01:22.000
+ I have spent these 30 years exploring the relationship between the Web and maps,
+
+1
+00:01:22.000 --> 00:01:25.000
+both through implementation and through standardization.
+
+1
+00:01:25.000 --> 00:01:32.000
+ It was 1995. The Great Hanshin-Awaji Earthquake had just happened. 
+
+1
+00:01:32.000 --> 00:01:37.000
+At the time, I was deeply drawn to a new technology called the World Wide Web.
+
+1
+00:01:37.000 --> 00:01:49.000
+And this disaster sparked a discussion, in a study group I belonged to, about how to connect information from different organizations during a crisis. 
+
+1
+00:01:49.000 --> 00:01:57.000
+That is when I started thinking that the future Web would be one where many different organizations publish their own information, 
+
+1
+00:01:57.000 --> 00:02:00.000
+and hyperlinks connect it all together. 
+
+1
+00:02:00.000 --> 00:02:08.000
+And I thought: maybe a map could work the same way. Not a map owned and managed by a single organization, 
+
+1
+00:02:08.000 --> 00:02:17.000
+but one where different organizations each provide their own information, and the user freely layers them together. 
+
+1
+00:02:17.000 --> 00:02:21.000
+That was the idea I called Hyper Layering. 
+
+1
+00:02:21.000 --> 00:02:29.000
+To me, the Web was never about collecting everything into one place. It was about connecting independent pieces of information.
+
+1
+00:02:30.000 --> 00:02:40.000
+But the Web took another path. In the 2000s, Web 2.0, mashups, and eventually cloud computing became dominant. 
+
+1
+00:02:40.000 --> 00:02:49.000
+It was a very powerful model. But something changed along the way. Integration moved from the edge to the server. 
+
+1
+00:02:49.000 --> 00:02:58.000
+The server collected the data. The server processed it. The server integrated it. And then it delivered the result to the user. 
+
+1
+00:02:58.000 --> 00:03:05.000
+This was, of course, extremely useful. But it also created new problems. Gatekeepers. Vendor lock-in. 
+
+1
+00:03:05.000 --> 00:03:11.000
+And increasing concentration of the Web around a small number of major platforms. 
+
+1
+00:03:11.000 --> 00:03:18.000
+These are no longer just technical concerns. They have become structural challenges of the digital age.
+
+1
+00:03:18.000 --> 00:03:27.000
+And then something else happened. OpenStreetMap. OSM did more than create a wonderful open dataset. 
+
+1
+00:03:27.000 --> 00:03:34.000
+It made the map itself open. Instead of one organization deciding, "This is the map of the world," 
+
+1
+00:03:34.000 --> 00:03:41.000
+people around the world could create, share, and use the map themselves. This was a huge change. 
+
+1
+00:03:41.000 --> 00:03:44.000
+The map itself became something everyone could build together. 
+
+1
+00:03:44.000 --> 00:03:50.000
+And that has a deep connection with what I was thinking about the Web back in 1995. 
+
+1
+00:03:50.000 --> 00:03:57.000
+But it also leaves us with another question. If the map is open, what happens next?
+
+1
+00:03:57.000 --> 00:04:07.000
+So, once we have an open map like OpenStreetMap, and we start putting all kinds of information on top of it — what happens? 
+
+1
+00:04:07.000 --> 00:04:15.000
+Weather. Disaster information. Shelters. Traffic. Community information. There are countless kinds of information. 
+
+1
+00:04:15.000 --> 00:04:25.000
+And very quickly, we think: "Let's bring all of this together." Collect the data. Integrate it. And deliver it as one service — often as a portal. 
+
+1
+00:04:25.000 --> 00:04:33.000
+This is exactly the familiar approach that Web 2.0 taught us. But here another question comes up. 
+
+1
+00:04:33.000 --> 00:04:39.000
+Where should that integration actually happen? Does it really have to happen in the center?
+
+1
+00:04:39.000 --> 00:04:44.000
+I started questioning the idea that we should put the whole world into a database. 
+
+1
+00:04:44.000 --> 00:04:50.000
+The real world consists of countless actors, countless kinds of information, and countless services. 
+
+1
+00:04:50.000 --> 00:04:56.000
+And they are constantly changing. After all, the real world is not a database. 
+
+1
+00:04:56.000 --> 00:05:03.000
+So perhaps we don't need to force everything into one schema. Each piece of information can stay independent. 
+
+1
+00:05:03.000 --> 00:05:10.000
+And we compose them only when we need to. I came to believe that this is actually the more natural way.
+
+1
+00:05:10.000 --> 00:05:18.000
+ And this is where the map becomes interesting. The data can be different. The sources can be different. 
+
+1
+00:05:18.000 --> 00:05:27.000
+The protocols can be different. But they can still share the same space. Different data. Different sources. One spatial context. 
+
+1
+00:05:27.000 --> 00:05:30.000
+The map doesn't have to own all the information. 
+
+1
+00:05:30.000 --> 00:05:36.000
+It can simply provide a common context in which different information can be understood and composed. 
+
+1
+00:05:36.000 --> 00:05:42.000
+This is the basic idea behind what I call Hyper Layering Architecture, or HLA.
+
+1
+00:05:42.000 --> 00:05:47.000
+Then came 2011. The Great East Japan Earthquake. 
+
+1
+00:05:47.000 --> 00:05:55.000
+At that point, everything I had been thinking about maps and the Web became a real world problem. 
+
+1
+00:05:55.000 --> 00:06:01.000
+By then, Web 2.0 style portals were already becoming common. 
+
+1
+00:06:01.000 --> 00:06:11.000
+But in disaster response, the information you need is extremely diverse, and the combination you need changes depending on the situation.
+
+1
+00:06:11.000 --> 00:06:20.000
+Weather. Damage information. Roads. Shelters. Aerial imagery. And information from people in the field. 
+
+1
+00:06:20.000 --> 00:06:26.000
+It is simply not practical to integrate all of this into a single portal in advance. 
+
+1
+00:06:26.000 --> 00:06:32.000
+So in reality, the information remained published separately, by different organizations. 
+
+1
+00:06:32.000 --> 00:06:37.000
+The information was available. But it could not be combined, when and how it was needed. 
+
+1
+00:06:37.000 --> 00:06:48.000
+That was the problem I encountered again in 2011. So I began rebuilding Hyper Layering Architecture, or HLA, into a practical, working system.
+
+1
+00:06:48.000 --> 00:06:56.000
+Here I realized there was a large gap between the world I had imagined in 1995 and the reality of the Web. 
+
+1
+00:06:56.000 --> 00:07:03.000
+You could collect links to different map sites. But clicking a link just took you to a different site. 
+
+1
+00:07:03.000 --> 00:07:09.000
+Layering itself simply didn't work. Why? The reason turned out to be very simple. 
+
+1
+00:07:09.000 --> 00:07:15.000
+I had originally imagined a world where the Web shared one common map representation. 
+
+1
+00:07:15.000 --> 00:07:24.000
+If that existed, different organizations' map information could stay independent, and still be layered together right in the browser. 
+
+1
+00:07:24.000 --> 00:07:30.000
+I had hoped SVG could become that common representation. But that is not what happened. 
+
+1
+00:07:30.000 --> 00:07:41.000
+The data behind maps came in GeoJSON, in proprietary CSV formats, in PNG tiles — each with its own format, and its own mechanism. 
+
+1
+00:07:41.000 --> 00:07:48.000
+In other words: the Web had links. But it had no common layer to connect maps together. 
+
+1
+00:07:48.000 --> 00:07:58.000
+That was the real gap between the world I imagined in 1995 and the reality of Web maps. So I had to rethink my approach.
+
+1
+00:07:58.000 --> 00:08:04.000
+And I never stopped building. I used it in real systems. When something broke, I fixed it. 
+
+1
+00:08:04.000 --> 00:08:10.000
+When a new kind of information appeared, I made it work. I did this for about 15 years. 
+
+1
+00:08:10.000 --> 00:08:18.000
+Over that time, HLA became more than an idea. It became a practical way to combine very different systems. 
+
+1
+00:08:18.000 --> 00:08:21.000
+And then came another important step.
+
+1
+00:08:21.000 --> 00:08:28.000
+To close that gap, I took the idea of a layer one step further. What if a layer was not just data? 
+
+1
+00:08:28.000 --> 00:08:33.000
+What if a layer were a Web App? A weather layer could be a weather Web App. 
+
+1
+00:08:33.000 --> 00:08:40.000
+A disaster layer could be a disaster Web App. A satellite layer could be a satellite Web App. 
+
+1
+00:08:40.000 --> 00:08:44.000
+Then it wouldn't matter that the data formats were different. 
+
+1
+00:08:44.000 --> 00:08:52.000
+Each piece of information could have its own logic and its own behavior, because the Web App itself absorbs those differences. 
+
+1
+00:08:52.000 --> 00:09:00.000
+A layer can carry not only data, but also logic, UI, and interaction with the user. 
+
+1
+00:09:00.000 --> 00:09:09.000
+A layer itself becomes a Web App. And each Web App can handle its own information in its own way, while still coexisting on the same map. 
+
+1
+00:09:09.000 --> 00:09:13.000
+This was the next step I arrived at.
+
+1
+00:09:13.000 --> 00:09:19.000
+And this brings me back to the idea from 1995. Web pages are connected by hyperlinks. 
+
+1
+00:09:19.000 --> 00:09:27.000
+So what if map layers were links, too? The user chooses a layer. That triggers the Web App behind the link. 
+
+1
+00:09:27.000 --> 00:09:32.000
+The Web App runs, right there, and builds the layer on the map.
+
+1
+00:09:32.000 --> 00:09:39.000
+The user chooses another layer. Another Web App is invoked, and that layer joins the same map. 
+
+1
+00:09:39.000 --> 00:09:48.000
+In other words: the Web's hyperlink extends all the way to map layers. Just as the Web has hypertext, the map can have hyper layers. 
+
+1
+00:09:48.000 --> 00:09:55.000
+No central server needs to decide in advance "this piece of information goes with that one." 
+
+1
+00:09:55.000 --> 00:10:04.000
+Whatever the user chooses gets composed, on the spot. The integration is not decided by a central server. The user decides.
+
+1
+00:10:04.000 --> 00:10:13.000
+And this changes where integration happens. Not in the server. Not in a database. In the user's browser. 
+
+1
+00:10:13.000 --> 00:10:19.000
+The browser loads independent Web Apps and composes them within the same spatial context. 
+
+1
+00:10:19.000 --> 00:10:25.000
+So, the user's browser itself becomes the integration layer.
+
+1
+00:10:25.000 --> 00:10:33.000
+Now let's actually run HLA 2.0, the idea I've just described. Weather information. 
+
+1
+00:10:33.000 --> 00:10:40.000
+Disaster information. Traffic information. OpenStreetMap. Satellite data. Community information. 
+
+1
+00:10:40.000 --> 00:10:46.000
+Each of these is prepared as an independent Web App. The data formats can differ. 
+
+1
+00:10:46.000 --> 00:10:54.000
+Each can have its own logic. And when the user picks what they need, each Web App starts running, right there on the map. 
+
+1
+00:10:54.000 --> 00:11:02.000
+Different Web Apps, composed together on one map. Many Web Apps, One Map. Let me show you what this looks like.
+
+1
+00:11:02.000 --> 00:11:06.000
+Change to DEMO Video
+
+1
+00:11:06.000 --> 00:11:13.000
+What you just saw is more than a demo. HLA's basic properties: independent, composable, practical. 
+
+1
+00:11:13.000 --> 00:11:19.000
+And these were refined over about 15 years of real-world development and operation. 
+
+1
+00:11:19.000 --> 00:11:28.000
+No data warehouse. No schema unification. No central integration server. And yet, very different systems work together. 
+
+1
+00:11:28.000 --> 00:11:40.000
+I also extracted thematic data from OpenStreetMap into separate layers, using techniques like QuadTree Composite Tiling for fast, large-scale mapping. 
+
+1
+00:11:40.000 --> 00:11:44.000
+This isn't just an architecture that looks good on a diagram. 
+
+1
+00:11:44.000 --> 00:11:52.000
+It works. And try doing this at this scale with a centralized server architecture — it gets difficult, fast.
+
+1
+00:11:52.000 --> 00:11:57.000
+And then, a new technology entered the picture. AI. 
+
+1
+00:11:57.000 --> 00:12:07.000
+Traditional GIS assumed that for a machine to understand information, the data has to be structured — modeled, and mapped to a schema. 
+
+1
+00:12:07.000 --> 00:12:14.000
+That's still important today. But AI opens up a slightly different possibility. 
+
+1
+00:12:14.000 --> 00:12:25.000
+A human can look at a map and understand: this area is flooded, this road is impassable, this shelter is too close to a hazard. 
+
+1
+00:12:25.000 --> 00:12:33.000
+Now AI is starting to read that same spatial context directly from a map's visual. So a new question comes up: 
+
+1
+00:12:33.000 --> 00:12:39.000
+does "machine readable" have to mean "readable from a database"? Structured data isn't going away. 
+
+1
+00:12:39.000 --> 00:12:46.000
+But with AI, the map itself becomes a meaningful source of information for machines, too.
+
+1
+00:12:46.000 --> 00:12:52.000
+So let's revisit what a map actually gives us. Geospatial data tells you where things are. 
+
+1
+00:12:52.000 --> 00:13:00.000
+A map tells you more — how things relate to what's around them, what matters, what's happening right now. 
+
+1
+00:13:00.000 --> 00:13:05.000
+The map itself becomes context, not just data. And that reframes HLA a little. 
+
+1
+00:13:05.000 --> 00:13:12.000
+HLA has always said: you don't need to unify the contents, you just need to be able to compose them as a map. 
+
+1
+00:13:12.000 --> 00:13:16.000
+Until now, I mostly saw that as a Web interoperability problem. 
+
+1
+00:13:16.000 --> 00:13:25.000
+In the age of AI, that same composition — different data, sharing one map context — becomes meaningful to AI as well. 
+
+1
+00:13:25.000 --> 00:13:32.000
+Data. Map. AI. I believe that's one of the biggest new possibilities ahead for the map.
+
+1
+00:13:32.000 --> 00:13:40.000
+That covers HLA 2.0.  Since HLA 1.0, I had been trying to turn this into a Web standard — 
+
+1
+00:13:40.000 --> 00:13:51.000
+working through the W3C to make SVG the common map representation, and even standardizing it in Japan as JIS X 7197. 
+
+1
+00:13:51.000 --> 00:13:55.000
+But SVG never became a global standard for maps on the Web. 
+
+1
+00:13:55.000 --> 00:14:04.000
+So with HLA 2.0, I stopped waiting and built it myself: a framework called svgmapjs, and LaWA — Layers as Web Apps — on top of it. 
+
+1
+00:14:04.000 --> 00:14:15.000
+I put a wide variety of WebGIS systems together, and made them work. HLA 2.0 proved, through implementation, that this was possible. 
+
+1
+00:14:15.000 --> 00:14:24.000
+But that success raised a new question of its own. Why should this only work inside a special-purpose framework? 
+
+1
+00:14:24.000 --> 00:14:27.000
+Why can't the Web itself do this?
+
+1
+00:14:27.000 --> 00:14:36.000
+So it's time to take on Web standardization again. With HLA 1.0, I tried to get there through standardization. 
+
+1
+00:14:36.000 --> 00:14:41.000
+HLA 2.0 proved it by building the framework and the applications myself. 
+
+1
+00:14:41.000 --> 00:14:48.000
+The next step is giving this capability to the Web itself. Web pages compose through hyperlinks. 
+
+1
+00:14:48.000 --> 00:14:57.000
+Maps should work the same way — not through a special-purpose framework, but through the browser itself, treating maps as hyper-layers.
+
+1
+00:14:57.000 --> 00:15:03.000
+The Browser Should Be Hyper-Layered. This is the direction I am pursuing with HLA 3.0.  
+
+1
+00:15:03.000 --> 00:15:08.000
+Not another special-purpose framework — a capability of the Web itself. 
+
+1
+00:15:08.000 --> 00:15:16.000
+Thirty years after I first took on this challenge, I want to try, once again, to get there for real.
+
+1
+00:15:16.000 --> 00:15:23.000
+Web And now, let's come back to OpenStreetMap once more. OpenStreetMap made the map of the world open. 
+
+1
+00:15:23.000 --> 00:15:31.000
+That is a truly extraordinary achievement. So what comes next? I believe it is building an open Web on top of that open map. 
+
+1
+00:15:31.000 --> 00:15:39.000
+Different organizations. Different data. Different services. They don't all have to be collected into one center. 
+
+1
+00:15:39.000 --> 00:15:45.000
+The user can choose them, link them, and compose them. OpenStreetMap made an open map. 
+
+1
+00:15:45.000 --> 00:15:54.000
+Now, on top of that achievement, we can build the next Web. An Open Map Web. From an open map, to an open Map Web.
+
+1
+00:15:54.000 --> 00:16:00.000
+I have long wanted to bring to maps a Web where information from different people and organizations can remain independent, 
+
+1
+00:16:00.000 --> 00:16:03.000
+while users can connect and combine it themselves. 
+
+1
+00:16:03.000 --> 00:16:08.000
+Meanwhile, OpenStreetMap independently made the map itself open. 
+
+1
+00:16:08.000 --> 00:16:18.000
+I have used that open map as a foundation for HLA, while exploring how different information and Web Apps can be combined on the same map. 
+
+1
+00:16:18.000 --> 00:16:26.000
+And recently, HLA has also begun to move beyond being the work of just myself and KDDI. 
+
+1
+00:16:26.000 --> 00:16:39.000
+With support from WebDINO Japan, a community has started to grow, with contributions including more LaWAs and the internationalization of our documentation. 
+
+1
+00:16:39.000 --> 00:16:43.000
+HLA is gradually becoming a community effort. 
+
+1
+00:16:43.000 --> 00:16:49.000
+And now, I think we are at a point where these two independent paths can come together through the Web. 
+
+1
+00:16:49.000 --> 00:16:55.000
+So I come back to the question. What if the Map itself became the Web? 
+
+1
+00:16:55.000 --> 00:17:05.000
+I think it is time to find out. If you want to build with HLA, create a LaWA and share it at hyperlayering.org. 
+
+1
+00:17:05.000 --> 00:17:13.000
+And if you are interested in making this part of the Web itself, join the W3C Maps for HTML Community Group. 
+
+1
+00:17:13.000 --> 00:17:21.000
+Let's build the next Web on the open map that OSM has created.
