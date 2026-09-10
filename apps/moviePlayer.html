@@ -36,9 +36,10 @@
     }
     /* 字幕のデザイン調整 */
     video::cue {
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(0, 0, 0, 0.4); /* 0.75 -> 0.4 などに変更（数値が小さいほど透明） */
       color: #fff;
       font-family: sans-serif;
+      font-size: 50%; /* 標準サイズの約 (50%) に指定 */
     }
   </style>
 </head>
@@ -81,17 +82,39 @@
         items.forEach((item, index) => {
           if (!item.trim()) return;
 
+          // コロンで分割
           const parts = item.split(':');
-          const lang = parts[0]?.trim();
-          const rawSrc = parts[1]?.trim();
-          const label = parts[2]?.trim() || lang.toUpperCase();
+          if (parts.length < 2) return;
+
+          // 1番目を lang に設定
+          const lang = parts[0].trim();
+
+          let rawSrc = '';
+          let label = '';
+
+          // parts の要素数によって URL と Label を切り分ける
+          // 例: lang:http://...:日本語 (要素数4以上)
+          // 例: lang:http://... (要素数3)
+          // 例: lang:relative.vtt:日本語 (要素数3)
+          // 例: lang:relative.vtt (要素数2)
+          
+          // 最後の要素に http(s) が含まれず、かつ要素が3つ以上なら、それを label と判定
+          const lastPart = parts[parts.length - 1].trim();
+          if (parts.length >= 3 && !lastPart.startsWith('http://') && !lastPart.startsWith('https://') && !lastPart.endsWith('.vtt')) {
+            label = lastPart;
+            // lang と label 以外の中間部分をすべて結合して URL に戻す
+            rawSrc = parts.slice(1, -1).join(':').trim();
+          } else {
+            label = lang.toUpperCase();
+            // lang 以外の残りすべてを結合して URL に戻す
+            rawSrc = parts.slice(1).join(':').trim();
+          }
 
           if (lang && rawSrc) {
             let absoluteVttUrl = rawSrc;
 
-            // 動画URL(videoSrc)を基準にして相対パスを解決
+            // 動画URL(videoSrc)を基準にして相対パス・絶対パスを解決
             try {
-              // ページ自体のURLではなく動画URLを基準(Base)にしてURLを作成
               const baseUrl = new URL(videoSrc, window.location.href);
               absoluteVttUrl = new URL(rawSrc, baseUrl).href;
             } catch (e) {
@@ -101,7 +124,7 @@
             const track = document.createElement('track');
             track.kind = 'subtitles';
             track.srclang = lang;
-            track.src = absoluteVttUrl; // 解決後の絶対URLをセット
+            track.src = absoluteVttUrl;
             track.label = label;
 
             if (index === 0) {
@@ -112,7 +135,6 @@
           }
         });
       }
-
       // 動画ソースのロード判定（HLS vs MP4）
       function loadSource(src, startTime) {
         // 動画URLを渡して字幕パスを解決・セットアップ
