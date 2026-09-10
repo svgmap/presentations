@@ -4,5 +4,7 @@
 
 * [**Slide Movie**](https://svgmap.github.io/presentations/apps/moviePlayer.html#src=/presentations/SOTMasia2026/SOTMasia2026slide.mp4)
   * With Caption ([EN](https://svgmap.github.io/presentations/apps/moviePlayer.html#src=/presentations/SOTMasia2026/SOTMasia2026slide.mp4&vtt=en:SlideTranscriptE.vtt)), ([JA](https://svgmap.github.io/presentations/apps/moviePlayer.html#src=/presentations/SOTMasia2026/SOTMasia2026slide.mp4&vtt=ja:SlideTranscriptJ.vtt))
+  * Transcript (VTT) [EN](SlideTranscriptE.vtt), [JA](SlideTranscriptJ.vtt)
 * [**Demo Movie**](https://svgmap.github.io/presentations/apps/moviePlayer.html#src=/presentations/SOTMasia2026/SOTMasia2026demo.m3u8)
   * With Caption ([EN](https://svgmap.github.io/presentations/apps/moviePlayer.html#src=/presentations/SOTMasia2026/SOTMasia2026demo.m3u8&vtt=en:DemoNarrationScriptE.vtt)), ([JA](https://svgmap.github.io/presentations/apps/moviePlayer.html#src=/presentations/SOTMasia2026/SOTMasia2026demo.m3u8&vtt=en:DemoNarrationScriptJ.vtt))
+  * Transcript (VTT) [EN](DemoNarrationScriptE.vtt), [JA](DemoNarrationScriptJ.vtt)
