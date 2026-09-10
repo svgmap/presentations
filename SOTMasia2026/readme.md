@@ -1,4 +1,4 @@
-## [State of the Map Asia 2026 OSAKA](https://stateofthemap.asia/) ##
+## [State of the Map Asia 2026 OSAKA](https://stateofthemap.asia/) (SOTM asia 2026 Osaka)
 
 ### [Keynote-2 : What if the Map itself became the Web?](https://stateofthemap.asia/schedule.html#:~:text=10%3A15%2D10,%F0%9F%87%AF%F0%9F%87%B5) ###
 
