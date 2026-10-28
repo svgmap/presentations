@@ -8,3 +8,5 @@ GitHubPages : https://svgmap.github.io/presentations/
 * [W3C Maps for HTML Community Group Input Materials](W3C_Maps4HTMLCG/)
 
 * [State of the Map Asia 2026 OSAKA](SOTMasia2026/)
+
+* [bosaiKokutai2026 : ぼうさいこくたい2026](bosaiKokutai2026)
