@@ -14,7 +14,7 @@ It is maintained solely to redirect old GitHub Pages URLs (`https://svgmap.githu
   `https://svgmap.github.io/presentations/`  
   → https://hyperlayering.github.io/presentations/
 
-* **防災国体 2026 (Bosai Kokutai 2026):**  
+* **ぼうさいこくたい 2026 (Bosai Kokutai 2026):**  
   `https://svgmap.github.io/presentations/bosaiKokutai2026/`  
   → https://hyperlayering.github.io/presentations/bosaiKokutai2026/
 
